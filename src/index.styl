@@ -1,0 +1,336 @@
+$darkred=#8c1248
+$red=#d11769
+$lightred=#ff3690
+$gray=#CCC
+$white=#FAFAFA
+$font=system-ui, BlinkMacSystemFont, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif
+
+html
+  background #111
+
+#controls
+  align-items center
+  background rgba(0, 0, 0, 0.85)
+  border-radius 10px
+  bottom 0
+  display none
+  font-family $font
+  left 0
+  margin 0 auto 10px auto
+  padding 10px
+  position fixed
+  right 0
+  width 675px
+  z-index 99999999
+
+  &.challengeLoaded
+    display flex
+
+  #controlsVolume
+    cursor pointer
+    padding 3px 10px 0 3px
+    img
+      height 20px
+      width 20px
+
+  #volumeSliderContainer
+    background rgba(0, 0, 0, 0.85)
+    border-radius 0 5px 5px 0
+    bottom 95px
+    cursor pointer
+    display none
+    left 9px
+    padding-top 4px
+    position absolute
+    transform rotate(-90deg)
+    z-index 999999999
+    &.volumeActive
+      display block
+
+    input
+      cursor pointer
+      padding 0
+      width 100px
+
+  #pause
+    cursor pointer
+    display flex
+    padding-right 10px
+    opacity 0
+    transition opacity .5s
+    &:hover #pauseSymbol
+      fill $red
+
+  #logo
+    margin-right 10px
+    img
+      height 32px
+      width 32px
+
+	#timeline
+    height 12px
+    width 160px
+
+    &:hover #timelineLine
+      height 6px
+      background $red
+      margin-top 3px
+
+  #timelineLine
+    height 2px
+    background $darkred
+    border-radius 2px
+    margin-top 5px
+    transition background 0.2s, height 0.2s, margin-top 0.2s
+
+  #playhead
+    background $white
+    position relative
+    border-radius 2px 0 0 2px
+    height 100%
+    width 0%
+
+#songTime
+  color $gray
+  font-size 11px
+  margin-left 15px
+  margin-right 5px
+  width 70px
+
+#songInfoContainer
+  align-items center
+  display flex
+
+  img
+    height 32px
+    width 32px
+
+  p
+    font-size 13px
+    margin 0
+    text-shadow 0 0 4px #000
+  #songInfo
+    display flex
+    flex-direction column
+    padding-left 10px
+  #songName
+    color $gray
+    font-weight bold
+    font-size 14px
+  #songSubName
+    color $lightred
+
+  #songInfoSelect
+    align-items center
+    display flex
+    position absolute
+    right 0
+
+  #controlsDifficulty
+    border 1px solid $gray
+    border-radius 5px
+    color $gray
+    cursor pointer
+    padding 5px 10px
+    text-align center
+    transition all .1s
+    p
+      font-family $font
+    &:after
+      content '\25B2'
+      display inline-block
+      font-size 11px
+      margin-left 5px
+    &:hover
+      border-color $white
+      color $white
+
+#controlsDifficultyOptions
+  background #020202
+  border 1px solid $gray
+  border-radius 5px
+  bottom 50px
+  color $white
+  display none
+  flex-direction column
+  font-family $font
+  font-size 13px
+  list-style none
+  margin 0
+  opacity 0
+  padding 0
+  position absolute
+  right 35px
+  transition all .2s
+  li
+    cursor pointer
+    padding 10px
+    min-width 65px
+    transition all .1s
+    &:hover
+      color $red
+
+.difficultyOptionsActive
+  #controlsDifficultyOptions
+    display flex
+    opacity 1
+
+#timeline
+  cursor pointer
+  position relative
+
+#timelineHover
+  bottom 0
+  color $white
+  font-size 11px
+  display none
+  padding 5px
+  position absolute
+  &.timelineHoverActive
+    display block
+
+#vrButton
+  background url(assets/img/enter-vr-button-background.png) no-repeat
+  background-size cover
+  border 0
+  bottom 25px
+  cursor pointer
+  height 23.5px
+  position absolute
+  right 30px
+  width 42px
+  z-index 9999999
+
+  &.a-hidden
+    visibility hidden
+
+  &:active
+    border 0
+
+  &:hover
+    background-position 0 -25px
+
+.github-corner
+  opacity 1
+  transition .1s opacity
+
+.isPlaying
+  .github-corner
+    opacity 0
+  #controls,
+  #controls #pause
+    opacity 1
+
+.a-loader-title
+  display none !important
+
+#songInfoContainer #searchToggle
+  cursor pointer
+  height 30px
+  padding 0 5px 0 15px
+  width 30px
+  svg
+    left 5px
+    position relative
+    top 5px
+    transform scale(1.5)
+  g
+    stroke $gray
+    transition stroke .1s
+  &:hover g
+    stroke $white
+
+#search
+  bottom 50px
+  align-items center
+  display flex
+  flex-direction column
+  justify-content center
+  left 0
+  margin 0 auto
+  position absolute
+  right 0
+  width 400px
+
+  input,
+  #url
+    background rgba(0, 0, 0, 0.85)
+    border-radius 10px
+    font-family $font
+    font-size 14px
+    position relative
+
+	input
+    border 1px solid $gray
+    bottom 15px
+    color $white
+    padding 8px 20px
+    width 340px
+
+  #url
+    border 1px solid #222
+    color $gray
+    padding 8px 20px
+    text-align center
+
+  #searchResultsContainer
+    background rgba(0, 0, 0, 0.95)
+    border 1px solid $gray
+    border-radius 10px
+    bottom 25px
+    display flex
+    flex-direction column
+    padding-bottom 6px
+    position relative
+    width 340px
+
+    > h3
+      color $gray
+      font-size 14px
+      text-align center
+      margin 8px 0 0 0
+
+  #searchResults
+    display flex
+    flex-direction column
+    margin 0
+    max-height 200px
+    list-style none
+    overflow auto
+    padding 5px 0 5px 0
+
+    li
+      align-items center
+      background none
+      color $gray
+      cursor pointer
+      display flex
+      font-size 12px
+      margin 0
+      margin-bottom 2px
+      padding-left 10px
+      transition background .1s
+      &:hover
+        background rgba(30, 30, 30, 0.95)
+      img
+        height 24px
+        width 24px
+      p
+        margin 0
+        padding-left 10px
+
+#breakWarning
+  background #111
+  border-radius 5px
+  color #FAFAFA
+  font-family $font
+  font-size 18px
+  left 0
+  margin 0 15%
+  opacity 0.75
+  padding 10px
+  position fixed
+  right 0
+  text-align center
+  z-index 999999999
+  top 20px
