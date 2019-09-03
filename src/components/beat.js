@@ -130,6 +130,12 @@ AFRAME.registerComponent('beat', {
     this.blockEl.object3D.visible = true;
     this.destroyed = false;
     this.el.object3D.visible = true;
+
+    this.el.addEventListener("mouseenter", e => {
+      // e.target.setAttribute('scale', {x: 1.5, y: 1.5, z: 1.5});
+      // block.object3D.scale.set(2, 2, 2);
+      this.destroyBeat();
+    });
   },
 
   tock: function (time, timeDelta) {
@@ -161,19 +167,19 @@ AFRAME.registerComponent('beat', {
       position.z += this.data.speed * (timeDelta / 1000);
       rotation.z = this.startRotationZ;
 
-      console.log(position.x)
+      // console.log(position.x)
 
       if (oldPosition < -1 * SWORD_OFFSET && position.z >= -1 * SWORD_OFFSET) {
         this.returnToPoolTimeStart = time;
         if (this.data.type === 'mine') {
           this.destroyMine();
         } else {
-          document.onmousemove = (e) => {
-            console.log('mouse', e.clientX)
-            // if(e.clientX > position.x){
-            //   this.destroyBeat()
-            // }
-          }
+          // document.onmousemove = (e) => {
+          //   // console.log('mouse', e.clientX)
+          //   if(e.clientX > position.x){
+          //     // this.destroyBeat()
+          //   }
+          // }
           // this.destroyBeat();
         }
       }
