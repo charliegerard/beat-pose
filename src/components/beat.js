@@ -136,6 +136,7 @@ AFRAME.registerComponent('beat', {
     // if(this.el.object3D.position.z < 0){
     //   this.destroyBeat()
     // }
+    
     // this.el.addEventListener("mouseenter", e => {
     //   // e.target.setAttribute('scale', {x: 1.5, y: 1.5, z: 1.5});
     //   // block.object3D.scale.set(2, 2, 2);
