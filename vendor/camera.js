@@ -19,6 +19,10 @@ import {drawBoundingBox, drawKeypoints, drawSkeleton, isMobile, toggleLoadingUI,
 const videoWidth = window.innerWidth;
 const videoHeight = window.innerHeight;
 
+export let handsKeyPoints;
+
+export let leftHandPosition;
+
 /**
  * Loads a the camera to be used in the demo
  *
@@ -272,6 +276,16 @@ const guiState = {
 // //   document.getElementById('main').appendChild(stats.dom);
 // }
 
+
+function getLeftHand(keypoints){
+  for(var i = 0; i < keypoints.length; i++){
+    if(keypoints[i].part === 'leftWrist'){
+      return keypoints[i].position;
+    }
+  }
+}
+
+
 /**
  * Feeds an image to posenet to estimate poses - this is where the magic
  * happens. This function loops with a requestAnimationFrame method.
@@ -403,7 +417,10 @@ function detectPoseInRealTime(video, net) {
     poses.forEach(({score, keypoints}) => {
       if (score >= minPoseConfidence) {
         if (guiState.output.showPoints) {
+          handsKeyPoints = keypoints;
           drawKeypoints(keypoints, minPartConfidence, ctx);
+
+          leftHandPosition = getLeftHand(keypoints);
         }
         // if (guiState.output.showSkeleton) {
         //   drawSkeleton(keypoints, minPartConfidence, ctx);

@@ -10,6 +10,7 @@
     <script src="vendor/demo_util.js" type="module"></script>
     <script src="vendor/camera.js" type="module"></script>
     <script src="vendor/custom-cube.js" type="module"></script>
+    <script src="vendor/hand-controller.js" type="module"></script>
 
     {% if DEBUG_AFRAME %}
       <script src="http://{{ HOST }}:9000/dist/aframe-master.js"></script>
@@ -121,6 +122,7 @@
 
 
       <a-entity custom-cube="width: 0.5; height: 0.25; depth: 1; color: orange" position="0 1 -1"></a-entity>
+      <a-entity hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: green" position="1 1 -1"></a-entity>
 
     </a-scene>
 

@@ -1,7 +1,13 @@
 let mouse = {x: 0, y: 0};
-let el;
+let el, self;;
 
-AFRAME.registerComponent('custom-cube', {
+import {drawBoundingBox, drawKeypoints, drawSkeleton, isMobile, toggleLoadingUI, tryResNetButtonName, tryResNetButtonText, updateTryResNetButtonDatGuiCss} from './demo_util.js';
+
+import {handsKeyPoints, leftHandPosition} from './camera.js';
+
+let previousLeftHandPosition = {x: 0, y: 0, z: 0};
+
+AFRAME.registerComponent('hand-controller', {
     schema: {
         width: {type: 'number', default: 1},
         height: {type: 'number', default: 1},
@@ -11,7 +17,8 @@ AFRAME.registerComponent('custom-cube', {
     init: function () {
         var data = this.data;
         el = this.el;
-        document.addEventListener('mousemove', this.onMouseMove, false);
+        self = this;
+        // document.addEventListener('mousemove', this.onMouseMove, false);
     
         // Create geometry.
         this.geometry = new THREE.BoxBufferGeometry(data.width, data.height, data.depth);
@@ -21,28 +28,35 @@ AFRAME.registerComponent('custom-cube', {
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         // Set mesh on entity.
         el.setObject3D('mesh', this.mesh);
+
+        window.requestAnimationFrame(this.checkHands);
     },
-
-    onMouseMove: function(event){
-        event.preventDefault();
-
-        // var camera = document.querySelector('#camera');
-        // var cameraEl = camera.object3D.children[1];
-
-        // mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        // mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-
-        // var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
-        // vector.unproject(cameraEl);
-
-        // var cameraElPosition = cameraEl.el.object3D.position;
-
-        // var dir = vector.sub(cameraElPosition).normalize();
-        // var distance = - cameraElPosition.z / dir.z;
-        // var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
-        // el.object3D.position.copy(pos);
+    checkHands: function test() {
+        if(leftHandPosition){
+            if(leftHandPosition !== previousLeftHandPosition){
+                self.onHandMove();
+                previousLeftHandPosition = leftHandPosition;
+            }
+        }
+        window.requestAnimationFrame(test);
     },
+    onHandMove: function(){
+        var camera = document.querySelector('#camera');
+        var cameraEl = camera.object3D.children[1];
 
+        mouse.x = (leftHandPosition.x / window.innerWidth) * 2 - 1;
+        mouse.y = - (leftHandPosition.y / window.innerHeight) * 2 + 1;
+
+        var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
+        vector.unproject(cameraEl);
+
+        var cameraElPosition = cameraEl.el.object3D.position;
+
+        var dir = vector.sub(cameraElPosition).normalize();
+        var distance = - cameraElPosition.z / dir.z;
+        var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
+        el.object3D.position.copy(pos);
+    },
     update: function (oldData) {
         var data = this.data;
         var el = this.el;
