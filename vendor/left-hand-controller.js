@@ -1,5 +1,5 @@
 let mouse = {x: 0, y: 0};
-let el, self;;
+let el, self;
 
 import {drawBoundingBox, drawKeypoints, drawSkeleton, isMobile, toggleLoadingUI, tryResNetButtonName, tryResNetButtonText, updateTryResNetButtonDatGuiCss} from './demo_util.js';
 
@@ -7,7 +7,7 @@ import {handsKeyPoints, leftHandPosition} from './camera.js';
 
 let previousLeftHandPosition = {x: 0, y: 0, z: 0};
 
-AFRAME.registerComponent('hand-controller', {
+AFRAME.registerComponent('left-hand-controller', {
     schema: {
         width: {type: 'number', default: 1},
         height: {type: 'number', default: 1},
@@ -51,7 +51,6 @@ AFRAME.registerComponent('hand-controller', {
         vector.unproject(cameraEl);
 
         var cameraElPosition = cameraEl.el.object3D.position;
-
         var dir = vector.sub(cameraElPosition).normalize();
         var distance = - cameraElPosition.z / dir.z;
         var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));

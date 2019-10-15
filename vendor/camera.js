@@ -22,6 +22,7 @@ const videoHeight = window.innerHeight;
 export let handsKeyPoints;
 
 export let leftHandPosition;
+export let rightHandPosition;
 
 /**
  * Loads a the camera to be used in the demo
@@ -276,7 +277,6 @@ const guiState = {
 // //   document.getElementById('main').appendChild(stats.dom);
 // }
 
-
 function getLeftHand(keypoints){
   for(var i = 0; i < keypoints.length; i++){
     if(keypoints[i].part === 'leftWrist'){
@@ -285,6 +285,13 @@ function getLeftHand(keypoints){
   }
 }
 
+function getRightHand(keypoints){
+  for(var i = 0; i < keypoints.length; i++){
+    if(keypoints[i].part === 'rightWrist'){
+      return keypoints[i].position;
+    }
+  }
+}
 
 /**
  * Feeds an image to posenet to estimate poses - this is where the magic
@@ -421,6 +428,7 @@ function detectPoseInRealTime(video, net) {
           drawKeypoints(keypoints, minPartConfidence, ctx);
 
           leftHandPosition = getLeftHand(keypoints);
+          rightHandPosition = getRightHand(keypoints);
         }
         // if (guiState.output.showSkeleton) {
         //   drawSkeleton(keypoints, minPartConfidence, ctx);

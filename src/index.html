@@ -9,8 +9,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
     <script src="vendor/demo_util.js" type="module"></script>
     <script src="vendor/camera.js" type="module"></script>
-    <script src="vendor/custom-cube.js" type="module"></script>
-    <script src="vendor/hand-controller.js" type="module"></script>
+    <!-- <script src="vendor/custom-cube.js" type="module"></script> -->
+    <script src="vendor/left-hand-controller.js" type="module"></script>
+    <script src="vendor/right-hand-controller.js" type="module"></script>
 
     {% if DEBUG_AFRAME %}
       <script src="http://{{ HOST }}:9000/dist/aframe-master.js"></script>
@@ -121,8 +122,9 @@
         bind__cursor-mesh="active: menuActive"></a-entity>
 
 
-      <a-entity custom-cube="width: 0.5; height: 0.25; depth: 1; color: orange" position="0 1 -1"></a-entity>
-      <a-entity hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: green" position="1 1 -1"></a-entity>
+      <!-- <a-entity custom-cube="width: 0.5; height: 0.25; depth: 1; color: orange" position="0 1 -1"></a-entity> -->
+      <a-entity id="right-hand" right-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: blue" position="1 1 -1"></a-entity>
+      <a-entity id="left-hand" left-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: red" position="-1 1 -1"></a-entity>
 
     </a-scene>
 
