@@ -1,11 +1,14 @@
 let mouse = {x: 0, y: 0};
 let el, self;
 
-import {drawBoundingBox, drawKeypoints, drawSkeleton, isMobile, toggleLoadingUI, tryResNetButtonName, tryResNetButtonText, updateTryResNetButtonDatGuiCss} from './demo_util.js';
-
 import {handsKeyPoints, leftHandPosition} from './camera.js';
-
+ 
 let previousLeftHandPosition = {x: 0, y: 0, z: 0};
+
+var raycaster = new THREE.Raycaster();
+var intersects;
+var direction = new THREE.Vector3();
+var far = new THREE.Vector3();
 
 AFRAME.registerComponent('left-hand-controller', {
     schema: {
@@ -18,10 +21,10 @@ AFRAME.registerComponent('left-hand-controller', {
         var data = this.data;
         el = this.el;
         self = this;
-        // document.addEventListener('mousemove', this.onMouseMove, false);
     
         // Create geometry.
         this.geometry = new THREE.BoxBufferGeometry(data.width, data.height, data.depth);
+        self.geometry = this.geometry;
         // Create material.
         this.material = new THREE.MeshStandardMaterial({color: data.color});
         // Create mesh.
@@ -44,6 +47,8 @@ AFRAME.registerComponent('left-hand-controller', {
         var camera = document.querySelector('#camera');
         var cameraEl = camera.object3D.children[1];
 
+        const entities = document.querySelectorAll('[test]'); 
+  
         mouse.x = (leftHandPosition.x / window.innerWidth) * 2 - 1;
         mouse.y = - (leftHandPosition.y / window.innerHeight) * 2 + 1;
 
@@ -55,6 +60,45 @@ AFRAME.registerComponent('left-hand-controller', {
         var distance = - cameraElPosition.z / dir.z;
         var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
         el.object3D.position.copy(pos);
+
+        // Raycasting
+        // ------------------------
+        // console.log(el.object3D.el.object3DMap.mesh.geometry)
+        // console.log(el.object3D.el.children[0].geometry)
+        // console.log(el.getObject3D('mesh').geometry.vertices)
+        // console.log(el.getObject3D('mesh').geometry.attributes)
+
+        console.log(el.object3D.isMesh)
+
+        // const position = self.geometry.attributes.position;
+        // const vector = new THREE.Vector3();
+     
+        // for ( let i = 0, l = position.count; i < l; i ++ )
+     
+        //    vector.fromBufferAttribute( position, i );
+        //    vector.applyMatrix4( self.matrixWorld );
+        //    console.log(vector);
+        // }
+
+        // if(entities){
+        //     var originPoint = el.object3D.position.clone();
+
+        //     for (var vertexIndex = 0; vertexIndex < el.object3D.el.children[0].Mesh.geometry.vertices.length; vertexIndex++) {
+        //         var localVertex = el.object3D.el.children[0].geometry.vertices[vertexIndex].clone();
+    
+        //         var globalVertex = localVertex.applyMatrix4(cube.matrix);
+        //         var directionVector = globalVertex.sub(cube.position);
+        //         var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
+        //         var collisionResults = ray.intersectObjects([entities]);
+        //         if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
+        //             console.log(collisionResults);
+        //             // collisionResults[0].object.material.transparent = true;
+        //             // collisionResults[0].object.material.opacity = 0.4;
+        //         }
+        //     }
+        // }
+
+
     },
     update: function (oldData) {
         var data = this.data;
