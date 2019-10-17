@@ -1,14 +1,10 @@
 let mouse = {x: 0, y: 0};
 let el, self;
 
-import {handsKeyPoints, leftHandPosition} from './camera.js';
+import {leftHandPosition, rightHandPosition} from './camera.js';
  
 let previousLeftHandPosition = {x: 0, y: 0, z: 0};
-
-var raycaster = new THREE.Raycaster();
-var intersects;
-var direction = new THREE.Vector3();
-var far = new THREE.Vector3();
+var leftHandController;
 
 AFRAME.registerComponent('left-hand-controller', {
     schema: {
@@ -23,14 +19,19 @@ AFRAME.registerComponent('left-hand-controller', {
         self = this;
     
         // Create geometry.
-        this.geometry = new THREE.BoxBufferGeometry(data.width, data.height, data.depth);
+        // this.geometry = new THREE.BoxBufferGeometry(data.width, data.height, data.depth);
+        this.geometry = new THREE.BoxGeometry(data.width, data.height, data.depth);
         self.geometry = this.geometry;
         // Create material.
         this.material = new THREE.MeshStandardMaterial({color: data.color});
         // Create mesh.
         this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+        leftHandController = this.mesh;
+        // leftHandController.position.set(0,0,0);
         // Set mesh on entity.
         el.setObject3D('mesh', this.mesh);
+        this.mesh.name = "left-hand-controller"
 
         window.requestAnimationFrame(this.checkHands);
     },
@@ -48,6 +49,9 @@ AFRAME.registerComponent('left-hand-controller', {
         var cameraEl = camera.object3D.children[1];
 
         const entities = document.querySelectorAll('[test]'); 
+        const rightHand = document.querySelectorAll('[right-hand]'); 
+
+        const rightHandObject = Array.from(rightHand)[0].object3D;
   
         mouse.x = (leftHandPosition.x / window.innerWidth) * 2 - 1;
         mouse.y = - (leftHandPosition.y / window.innerHeight) * 2 + 1;
@@ -59,44 +63,39 @@ AFRAME.registerComponent('left-hand-controller', {
         var dir = vector.sub(cameraElPosition).normalize();
         var distance = - cameraElPosition.z / dir.z;
         var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
+
+        // position of the left hand.
         el.object3D.position.copy(pos);
 
         // Raycasting
         // ------------------------
-        // console.log(el.object3D.el.object3DMap.mesh.geometry)
-        // console.log(el.object3D.el.children[0].geometry)
-        // console.log(el.getObject3D('mesh').geometry.vertices)
-        // console.log(el.getObject3D('mesh').geometry.attributes)
+        const entitiesObjects = [];
+        const leftHandVertices = el.object3D.el.object3D.children[0].geometry.vertices;
+        const leftHandMesh = el.object3D.el.object3D.children[0];
+        const leftHandPositionVector = el.object3D.position;
 
-        console.log(el.object3D.isMesh)
+        if(Array.from(entities).length){
+            for(var i = 0; i < Array.from(entities).length; i++){
+                const beatMesh = entities[i].object3D.el.object3D.el.object3D.el.object3D.children[0].children[1];
+                entitiesObjects.push(beatMesh);
+            }
+            
+            var originPoint = leftHandPositionVector.clone();
+            var directionVector;
 
-        // const position = self.geometry.attributes.position;
-        // const vector = new THREE.Vector3();
-     
-        // for ( let i = 0, l = position.count; i < l; i ++ )
-     
-        //    vector.fromBufferAttribute( position, i );
-        //    vector.applyMatrix4( self.matrixWorld );
-        //    console.log(vector);
-        // }
-
-        // if(entities){
-        //     var originPoint = el.object3D.position.clone();
-
-        //     for (var vertexIndex = 0; vertexIndex < el.object3D.el.children[0].Mesh.geometry.vertices.length; vertexIndex++) {
-        //         var localVertex = el.object3D.el.children[0].geometry.vertices[vertexIndex].clone();
+             for (var vertexIndex = 0; vertexIndex < leftHandVertices.length; vertexIndex++) {
+                var localVertex = leftHandVertices[vertexIndex].clone();
     
-        //         var globalVertex = localVertex.applyMatrix4(cube.matrix);
-        //         var directionVector = globalVertex.sub(cube.position);
-        //         var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
-        //         var collisionResults = ray.intersectObjects([entities]);
-        //         if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
-        //             console.log(collisionResults);
-        //             // collisionResults[0].object.material.transparent = true;
-        //             // collisionResults[0].object.material.opacity = 0.4;
-        //         }
-        //     }
-        // }
+                var globalVertex = localVertex.applyMatrix4(leftHandMesh.matrix);
+                var directionVector = globalVertex.sub(leftHandPositionVector);
+
+                var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
+                var collisionResults = ray.intersectObjects(entitiesObjects);
+                if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
+                    collisionResults[0].object.el.attributes[0].ownerElement.parentEl.components.beat.destroyBeat();
+                }
+            }
+        }
 
 
     },

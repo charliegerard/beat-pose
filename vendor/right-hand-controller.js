@@ -21,13 +21,16 @@ AFRAME.registerComponent('right-hand-controller', {
         // document.addEventListener('mousemove', this.onMouseMove, false);
     
         // Create geometry.
-        this.geometry = new THREE.BoxBufferGeometry(data.width, data.height, data.depth);
+        // this.geometry = new THREE.BoxBufferGeometry(data.width, data.height, data.depth);
+        this.geometry = new THREE.BoxGeometry(data.width, data.height, data.depth);
         // Create material.
         this.material = new THREE.MeshStandardMaterial({color: data.color});
         // Create mesh.
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         // Set mesh on entity.
         el.setObject3D('mesh', this.mesh);
+
+        el.setAttribute('right-hand', 'hello');
 
         window.requestAnimationFrame(this.checkHands);
     },

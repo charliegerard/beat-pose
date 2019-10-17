@@ -32,6 +32,7 @@ AFRAME.registerComponent('beat', {
     speed: {default: 8.0},
     type: {default: 'arrow', oneOf: ['arrow', 'dot', 'mine']},
     verticalPosition: {default: 'middle', oneOf: ['bottom', 'middle', 'top']},
+    // verticalPosition: {default: 'top'},
     warmupPosition: {default: 0},
   },
 
@@ -104,6 +105,8 @@ AFRAME.registerComponent('beat', {
     this.mineParticles = document.getElementById('mineParticles');
     this.explodeEventDetail = {position: new THREE.Vector3(), rotation: new THREE.Euler()};
     this.glow = null;
+
+    this.destroyBeat = this.destroyBeat;
 
     this.initBlock();
     if (this.data.type === 'mine') {
