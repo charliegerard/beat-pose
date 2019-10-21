@@ -311,83 +311,83 @@ function detectPoseInRealTime(video, net) {
   canvas.height = videoHeight;
 
   async function poseDetectionFrame() {
-    if (guiState.changeToArchitecture) {
-      // Important to purge variables and free up GPU memory
-      guiState.net.dispose();
-      toggleLoadingUI(true);
-      guiState.net = await posenet.load({
-        architecture: guiState.changeToArchitecture,
-        outputStride: guiState.outputStride,
-        inputResolution: guiState.inputResolution,
-        multiplier: guiState.multiplier,
-      });
-      toggleLoadingUI(false);
-      guiState.architecture = guiState.changeToArchitecture;
-      guiState.changeToArchitecture = null;
-    }
+    // if (guiState.changeToArchitecture) {
+    //   // Important to purge variables and free up GPU memory
+    //   guiState.net.dispose();
+    //   toggleLoadingUI(true);
+    //   guiState.net = await posenet.load({
+    //     architecture: guiState.changeToArchitecture,
+    //     outputStride: guiState.outputStride,
+    //     inputResolution: guiState.inputResolution,
+    //     multiplier: guiState.multiplier,
+    //   });
+    //   toggleLoadingUI(false);
+    //   guiState.architecture = guiState.changeToArchitecture;
+    //   guiState.changeToArchitecture = null;
+    // }
 
-    if (guiState.changeToMultiplier) {
-      guiState.net.dispose();
-      toggleLoadingUI(true);
-      guiState.net = await posenet.load({
-        architecture: guiState.architecture,
-        outputStride: guiState.outputStride,
-        inputResolution: guiState.inputResolution,
-        multiplier: +guiState.changeToMultiplier,
-        quantBytes: guiState.quantBytes
-      });
-      toggleLoadingUI(false);
-      guiState.multiplier = +guiState.changeToMultiplier;
-      guiState.changeToMultiplier = null;
-    }
+    // if (guiState.changeToMultiplier) {
+    //   guiState.net.dispose();
+    //   toggleLoadingUI(true);
+    //   guiState.net = await posenet.load({
+    //     architecture: guiState.architecture,
+    //     outputStride: guiState.outputStride,
+    //     inputResolution: guiState.inputResolution,
+    //     multiplier: +guiState.changeToMultiplier,
+    //     quantBytes: guiState.quantBytes
+    //   });
+    //   toggleLoadingUI(false);
+    //   guiState.multiplier = +guiState.changeToMultiplier;
+    //   guiState.changeToMultiplier = null;
+    // }
 
-    if (guiState.changeToOutputStride) {
-      // Important to purge variables and free up GPU memory
-      guiState.net.dispose();
-      toggleLoadingUI(true);
-      guiState.net = await posenet.load({
-        architecture: guiState.architecture,
-        outputStride: +guiState.changeToOutputStride,
-        inputResolution: guiState.inputResolution,
-        multiplier: guiState.multiplier,
-        quantBytes: guiState.quantBytes
-      });
-      toggleLoadingUI(false);
-      guiState.outputStride = +guiState.changeToOutputStride;
-      guiState.changeToOutputStride = null;
-    }
+    // if (guiState.changeToOutputStride) {
+    //   // Important to purge variables and free up GPU memory
+    //   guiState.net.dispose();
+    //   toggleLoadingUI(true);
+    //   guiState.net = await posenet.load({
+    //     architecture: guiState.architecture,
+    //     outputStride: +guiState.changeToOutputStride,
+    //     inputResolution: guiState.inputResolution,
+    //     multiplier: guiState.multiplier,
+    //     quantBytes: guiState.quantBytes
+    //   });
+    //   toggleLoadingUI(false);
+    //   guiState.outputStride = +guiState.changeToOutputStride;
+    //   guiState.changeToOutputStride = null;
+    // }
 
-    if (guiState.changeToInputResolution) {
-      // Important to purge variables and free up GPU memory
-      guiState.net.dispose();
-      toggleLoadingUI(true);
-      guiState.net = await posenet.load({
-        architecture: guiState.architecture,
-        outputStride: guiState.outputStride,
-        inputResolution: +guiState.changeToInputResolution,
-        multiplier: guiState.multiplier,
-        quantBytes: guiState.quantBytes
-      });
-      toggleLoadingUI(false);
-      guiState.inputResolution = +guiState.changeToInputResolution;
-      guiState.changeToInputResolution = null;
-    }
+    // if (guiState.changeToInputResolution) {
+    //   // Important to purge variables and free up GPU memory
+    //   guiState.net.dispose();
+    //   toggleLoadingUI(true);
+    //   guiState.net = await posenet.load({
+    //     architecture: guiState.architecture,
+    //     outputStride: guiState.outputStride,
+    //     inputResolution: +guiState.changeToInputResolution,
+    //     multiplier: guiState.multiplier,
+    //     quantBytes: guiState.quantBytes
+    //   });
+    //   toggleLoadingUI(false);
+    //   guiState.inputResolution = +guiState.changeToInputResolution;
+    //   guiState.changeToInputResolution = null;
+    // }
 
-    if (guiState.changeToQuantBytes) {
-      // Important to purge variables and free up GPU memory
-      guiState.net.dispose();
-      toggleLoadingUI(true);
-      guiState.net = await posenet.load({
-        architecture: guiState.architecture,
-        outputStride: guiState.outputStride,
-        inputResolution: guiState.inputResolution,
-        multiplier: guiState.multiplier,
-        quantBytes: guiState.changeToQuantBytes
-      });
-      toggleLoadingUI(false);
-      guiState.quantBytes = guiState.changeToQuantBytes;
-      guiState.changeToQuantBytes = null;
-    }
+    // if (guiState.changeToQuantBytes) {
+    //   // Important to purge variables and free up GPU memory
+    //   guiState.net.dispose();
+    //   toggleLoadingUI(true);
+    //   guiState.net = await posenet.load({
+    //     architecture: guiState.architecture,
+    //     outputStride: guiState.outputStride,
+    //     inputResolution: guiState.inputResolution,
+    //     multiplier: guiState.multiplier,
+    //     quantBytes: guiState.changeToQuantBytes
+    //   });
+    //   toggleLoadingUI(false);
+    //   guiState.quantBytes = guiState.changeToQuantBytes;
+    //   guiState.changeToQuantBytes = null;
+    // }
 
     // Begin monitoring code for frames per second
     // stats.begin();

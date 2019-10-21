@@ -92,7 +92,15 @@ AFRAME.registerComponent('left-hand-controller', {
                 var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
                 var collisionResults = ray.intersectObjects(entitiesObjects);
                 if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
-                    collisionResults[0].object.el.attributes[0].ownerElement.parentEl.components.beat.destroyBeat();
+                    const beat = collisionResults[0].object.el.attributes[0].ownerElement.parentEl.components.beat;
+                    const beatColor = beat.attrValue.color;
+                    const beatType = beat.attrValue.type;
+                    // type === "dot"
+
+                    if(beatColor === "red"){
+                        beat.destroyBeat();
+                        // collisionResults[0].object.el.attributes[0].ownerElement.parentEl.components.beat.destroyBeat();
+                    }
                 }
             }
         }
