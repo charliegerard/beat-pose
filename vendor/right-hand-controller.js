@@ -1,7 +1,7 @@
 let mouse = {x: 0, y: 0};
 let el, self;
 
-import {drawBoundingBox, drawKeypoints, drawSkeleton, isMobile, toggleLoadingUI, tryResNetButtonName, tryResNetButtonText, updateTryResNetButtonDatGuiCss} from './demo_util.js';
+// import {drawBoundingBox, drawKeypoints, drawSkeleton, isMobile, toggleLoadingUI, tryResNetButtonName, tryResNetButtonText, updateTryResNetButtonDatGuiCss} from './demo_util.js';
 
 import {handsKeyPoints, rightHandPosition} from './camera.js';
 
