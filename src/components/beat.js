@@ -82,7 +82,7 @@ AFRAME.registerComponent('beat', {
   },
 
   verticalPositions: {
-    bottom: 0.70,
+    // bottom: 0.70,
     middle: 1.20,
     top: 1.70
   },
@@ -138,17 +138,6 @@ AFRAME.registerComponent('beat', {
     
     this.destroyed = false;
     this.el.object3D.visible = true;
-
-
-    // if(this.el.object3D.position.z < 0){
-    //   this.destroyBeat()
-    // }
-
-    // this.el.addEventListener("mouseenter", e => {
-    //   // e.target.setAttribute('scale', {x: 1.5, y: 1.5, z: 1.5});
-    //   // block.object3D.scale.set(2, 2, 2);
-    //   this.destroyBeat();
-    // });
   },
 
   tock: function (time, timeDelta) {
@@ -188,10 +177,6 @@ AFRAME.registerComponent('beat', {
       // let x_norm = window.LEFT_WRIST.position.x / (window.innerWidth / 2);
       // console.log(x_norm)
       // let y_norm = y / (window.innerHeight / 2);
-
-      // if(position.z > 0){
-      //   this.destroyBeat()
-      // }
 
       if (oldPosition < -1 * SWORD_OFFSET && position.z >= -1 * SWORD_OFFSET) {
         this.returnToPoolTimeStart = time;

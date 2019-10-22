@@ -23,16 +23,52 @@ AFRAME.registerComponent('right-hand-controller', {
         // Set mesh on entity.
         el.setObject3D('mesh', this.mesh);
 
+        // document.addEventListener('mousemove', this.onMouseMove);
+
         window.requestAnimationFrame(this.checkHands);
     },
     checkHands: function test() {
         if(rightHandPosition){
             if(rightHandPosition !== previousRightHandPosition){
-                self.onHandMove();
+                self.onHandMoveTwo();
                 previousRightHandPosition = rightHandPosition;
             }
         }
         window.requestAnimationFrame(test);
+    },
+    onMouseMove: function(e){
+        var mouse = new THREE.Vector2();
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
+
+        const camera = self.el.sceneEl.camera;
+        let raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, camera);
+
+        const entities = document.querySelectorAll('[test]'); 
+        const entitiesObjects = [];
+
+        if(Array.from(entities).length){
+            for(var i = 0; i < Array.from(entities).length; i++){
+                const beatMesh = entities[i].object3D.el.object3D.el.object3D.el.object3D.children[0].children[1];
+                entitiesObjects.push(beatMesh);
+            }
+
+            let intersects = raycaster.intersectObjects(entitiesObjects, true);
+            if(intersects.length){
+                console.log('colls: ', intersects)
+            }
+        }
+
+        // let scene = document.querySelector('a-scene');
+            // scene = scene.object3D;
+        // let intersects = raycaster.intersectObjects(scene.children, true);
+        // let intersects = raycaster.intersectObjects(entitiesObjects, true);
+
+        // if(intersects.length){
+        //     console.log('colls: ', intersects)
+        // }
+        
     },
     onHandMove: function(){
         var camera = document.querySelector('#camera');
@@ -44,8 +80,6 @@ AFRAME.registerComponent('right-hand-controller', {
         mouse.y = - (rightHandPosition.y / window.innerHeight) * 2 + 1;
         mouse.z = 10;
 
-  
-
         var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
         vector.unproject(cameraEl);
 
@@ -55,7 +89,6 @@ AFRAME.registerComponent('right-hand-controller', {
         var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
         el.object3D.position.copy(pos);
 
-        // console.log(pos)
         el.object3D.position.z = -0.2;
 
         // Raycasting
@@ -80,8 +113,17 @@ AFRAME.registerComponent('right-hand-controller', {
                 var globalVertex = localVertex.applyMatrix4(rightHandMesh.matrix);
                 var directionVector = globalVertex.sub(rightHandPositionVector);
 
-                var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
-                var collisionResults = ray.intersectObjects(entitiesObjects);
+                var raycaster = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
+                // var collisionResults = ray.intersectObjects(entitiesObjects);
+                let camera = document.getElementById('camera');
+                camera = camera.object3D.children[1];
+                raycaster.setFromCamera( directionVector, camera );
+
+                let scene = document.getElementById('scene');
+                scene = scene.object3D.children[1];
+
+                // var collisionResults = raycaster.intersectObjects(entitiesObjects, true);
+                var collisionResults = raycaster.intersectObjects(scene.children, true);
                 if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
                     const beat = collisionResults[0].object.el.attributes[0].ownerElement.parentEl.components.beat;
                     const beatColor = beat.attrValue.color;
@@ -96,23 +138,50 @@ AFRAME.registerComponent('right-hand-controller', {
             }
         }
     },
-    update: function (oldData) {
-        var data = this.data;
-        var el = this.el;
-        // If `oldData` is empty, then this means we're in the initialization process.
-        // No need to update.
-        if (Object.keys(oldData).length === 0) { return; }
-        // Geometry-related properties changed. Update the geometry.
-        if (data.width !== oldData.width ||
-            data.height !== oldData.height ||
-            data.depth !== oldData.depth) {
-          el.getObject3D('mesh').geometry = new THREE.BoxBufferGeometry(data.width, data.height,
-                                                                        data.depth);
+    onHandMoveTwo: function(){
+        var mouse = new THREE.Vector2();
+        mouse.x = (rightHandPosition.x / window.innerWidth) * 2 - 1;
+        mouse.y = - (rightHandPosition.y / window.innerHeight) * 2 + 1; 
+        
+        var cameraDiv = document.querySelector('#camera');
+        var cameraEl = cameraDiv.object3D.children[1];
+        
+        var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
+        vector.unproject(cameraEl);
+
+        var cameraElPosition = cameraEl.el.object3D.position;
+        var dir = vector.sub(cameraElPosition).normalize();
+        var distance = - cameraElPosition.z / dir.z;
+        var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
+        el.object3D.position.copy(pos);
+
+        el.object3D.position.z = -0.2;
+
+        const camera = self.el.sceneEl.camera;
+        let raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, camera);
+
+        const entities = document.querySelectorAll('[test]'); 
+        const entitiesObjects = [];
+
+        if(Array.from(entities).length){
+            for(var i = 0; i < Array.from(entities).length; i++){
+                const beatMesh = entities[i].object3D.el.object3D.el.object3D.el.object3D.children[0].children[1];
+                entitiesObjects.push(beatMesh);
+            }
+
+            let intersects = raycaster.intersectObjects(entitiesObjects, true);
+            if(intersects.length){
+                const beat = intersects[0].object.el.attributes[0].ownerElement.parentEl.components.beat;
+                const beatColor = beat.attrValue.color;
+                const beatType = beat.attrValue.type;
+
+                if(beatColor === "blue"){
+                    if(beatType === "arrow" || beatType === "dot"){
+                        beat.destroyBeat();
+                    } 
+                }
+            }
         }
-    
-        // Material-related properties changed. Update the material.
-        if (data.color !== oldData.color) {
-          el.getObject3D('mesh').material.color = new THREE.Color(data.color);
-        }
-      }
-  });
+    }
+});
