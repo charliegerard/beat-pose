@@ -58,8 +58,8 @@
       search
       stage-colors="color: blue"
       stats-param
+      vr-mode-ui="enabled: false"
       user-gesture
-      vr-mode-ui="enterVRButton: #vrButton"
       tutorial-2d>
 
       <a-assets timeout="10000">
@@ -124,8 +124,6 @@
       <a-entity id="left-hand" left-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #660338" position="-1 1 -0.2"></a-entity>
       <a-entity id="right-hand" right-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #036657" position="1 1 -0.2"></a-entity>
     </a-scene>
-
-    <a id="vrButton" href="#" title="Enter VR / Fullscreen"></a>
 
     {% include './templates/controls.html' %}
     {% include './templates/camera.html' %}

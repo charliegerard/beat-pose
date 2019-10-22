@@ -21,8 +21,8 @@ Then head to `localhost:9999` in your browser.
 
 ## To do
 
-- [ ] Remove camera stream code.
-- [ ] Add right hand
-- [ ] Left hand can only explode reds
-- [ ] Right hand can only explode blues
-- [ ] Remove canvas circles
+- [x] Remove camera stream code.
+- [x] Add right hand
+- [x] Left hand can only explode reds
+- [x] Right hand can only explode blues
+- [x] Remove canvas circles

@@ -5,7 +5,7 @@ const zipUrl = AFRAME.utils.getUrlParameter('zip');
 
 AFRAME.registerComponent('zip-loader', {
   schema: {
-    id: {default: zipUrl ? '' : (AFRAME.utils.getUrlParameter('id') || '811')},
+    id: {default: zipUrl ? '' : (AFRAME.utils.getUrlParameter('id') || '4a6')},
     isSafari: {default: false},
     difficulty: {default: AFRAME.utils.getUrlParameter('difficulty')}
   },
