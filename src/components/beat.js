@@ -27,13 +27,13 @@ AFRAME.registerComponent('beat', {
     color: {default: 'red', oneOf: ['red', 'blue']},
     cutDirection: {default: 'down'},
     debug: {default: true},
-    horizontalPosition: {default: 'left', oneOf: ['left', 'right']},
-    // horizontalPosition: {default: 'middleleft', oneOf: ['left', 'middleleft', 'middleright', 'right']},
+    // horizontalPosition: {default: 'left', oneOf: ['left', 'right']},
+    horizontalPosition: {default: 'middleleft', oneOf: ['left', 'middleleft', 'middleright', 'right']},
     size: {default: 0.40},
     speed: {default: 8.0},
     type: {default: 'arrow', oneOf: ['arrow', 'dot', 'mine']},
-    // verticalPosition: {default: 'middle', oneOf: ['bottom', 'middle', 'top']},
-    verticalPosition: {default: 'middle', oneOf: ['middle', 'top']},
+    verticalPosition: {default: 'middle', oneOf: ['bottom', 'middle', 'top']},
+    // verticalPosition: {default: 'middle', oneOf: ['middle', 'top']},
     // verticalPosition: {default: 'top'},
     warmupPosition: {default: 0},
   },
@@ -82,7 +82,7 @@ AFRAME.registerComponent('beat', {
   },
 
   verticalPositions: {
-    // bottom: 0.70,
+    bottom: 0.70,
     middle: 1.20,
     top: 1.70
   },
