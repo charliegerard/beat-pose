@@ -4,7 +4,7 @@ Prototype to play BeatSaver with body movements using Posenet and Tensorflow.js
 
 Based on the awesome work by Supermedium on the [beat saver viewer](https://github.com/supermedium/beatsaver-viewer).
 
-
+bohemian raphsody - http://localhost:9999/?id=4a6
 
 ## Development
 

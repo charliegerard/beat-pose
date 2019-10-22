@@ -1,10 +1,9 @@
 let mouse = {x: 0, y: 0};
 let el, self;
 
-import {leftHandPosition, rightHandPosition} from './camera.js';
+import {leftHandPosition} from './camera.js';
  
-let previousLeftHandPosition = {x: 0, y: 0, z: 0};
-var leftHandController;
+let previousLeftHandPosition = {x: 0, y: 0, z: -0.2};
 
 AFRAME.registerComponent('left-hand-controller', {
     schema: {
@@ -17,26 +16,13 @@ AFRAME.registerComponent('left-hand-controller', {
         var data = this.data;
         el = this.el;
         self = this;
-
-        // console.log(this.el.id)
-        // if(this.el.id === 'left-hand'){
-            
-        // }
     
-        // Create geometry.
-        // this.geometry = new THREE.BoxBufferGeometry(data.width, data.height, data.depth);
         this.geometry = new THREE.BoxGeometry(data.width, data.height, data.depth);
-        self.geometry = this.geometry;
-        // Create material.
         this.material = new THREE.MeshStandardMaterial({color: data.color});
-        // Create mesh.
         this.mesh = new THREE.Mesh(this.geometry, this.material);
 
-        // leftHandController = this.mesh;
-        // leftHandController.position.set(0,0,0);
         // Set mesh on entity.
         el.setObject3D('mesh', this.mesh);
-        // this.mesh.name = "left-hand-controller"
 
         window.requestAnimationFrame(this.checkHands);
     },
@@ -54,9 +40,6 @@ AFRAME.registerComponent('left-hand-controller', {
         var cameraEl = camera.object3D.children[1];
 
         const entities = document.querySelectorAll('[test]'); 
-        // const rightHand = document.querySelectorAll('[right-hand]'); 
-
-        // const rightHandObject = Array.from(rightHand)[0].object3D;
   
         mouse.x = (leftHandPosition.x / window.innerWidth) * 2 - 1;
         mouse.y = - (leftHandPosition.y / window.innerHeight) * 2 + 1;
@@ -71,6 +54,8 @@ AFRAME.registerComponent('left-hand-controller', {
 
         // position of the left hand.
         el.object3D.position.copy(pos);
+
+        el.object3D.position.z = -0.2;
 
         // Raycasting
         // ------------------------
@@ -100,11 +85,11 @@ AFRAME.registerComponent('left-hand-controller', {
                     const beat = collisionResults[0].object.el.attributes[0].ownerElement.parentEl.components.beat;
                     const beatColor = beat.attrValue.color;
                     const beatType = beat.attrValue.type;
-                    // type === "dot"
 
                     if(beatColor === "red"){
-                        beat.destroyBeat();
-                        // collisionResults[0].object.el.attributes[0].ownerElement.parentEl.components.beat.destroyBeat();
+                        if(beatType === "arrow" || beatType === "dot"){
+                            beat.destroyBeat();
+                        } 
                     }
                 }
             }
