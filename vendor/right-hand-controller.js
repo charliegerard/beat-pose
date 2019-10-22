@@ -30,7 +30,7 @@ AFRAME.registerComponent('right-hand-controller', {
         // Set mesh on entity.
         el.setObject3D('mesh', this.mesh);
 
-        el.setAttribute('right-hand', 'hello');
+        // el.setAttribute('right-hand', 'hello');
 
         window.requestAnimationFrame(this.checkHands);
     },
@@ -47,6 +47,8 @@ AFRAME.registerComponent('right-hand-controller', {
         var camera = document.querySelector('#camera');
         var cameraEl = camera.object3D.children[1];
 
+        const entities = document.querySelectorAll('[test]'); 
+
         mouse.x = (rightHandPosition.x / window.innerWidth) * 2 - 1;
         mouse.y = - (rightHandPosition.y / window.innerHeight) * 2 + 1;
 
@@ -58,6 +60,44 @@ AFRAME.registerComponent('right-hand-controller', {
         var distance = - cameraElPosition.z / dir.z;
         var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
         el.object3D.position.copy(pos);
+
+                // Raycasting
+        // ------------------------
+        const entitiesObjects = [];
+        const rightHandVertices = el.object3D.el.object3D.children[0].geometry.vertices;
+        const rightHandMesh = el.object3D.el.object3D.children[0];
+        const rightHandPositionVector = el.object3D.position;
+
+        if(Array.from(entities).length){
+            for(var i = 0; i < Array.from(entities).length; i++){
+                const beatMesh = entities[i].object3D.el.object3D.el.object3D.el.object3D.children[0].children[1];
+                entitiesObjects.push(beatMesh);
+            }
+            
+            var originPoint = rightHandPositionVector.clone();
+            var directionVector;
+
+             for (var vertexIndex = 0; vertexIndex < rightHandVertices.length; vertexIndex++) {
+                var localVertex = rightHandVertices[vertexIndex].clone();
+    
+                var globalVertex = localVertex.applyMatrix4(rightHandMesh.matrix);
+                var directionVector = globalVertex.sub(rightHandPositionVector);
+
+                var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
+                var collisionResults = ray.intersectObjects(entitiesObjects);
+                if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
+                    const beat = collisionResults[0].object.el.attributes[0].ownerElement.parentEl.components.beat;
+                    const beatColor = beat.attrValue.color;
+                    const beatType = beat.attrValue.type;
+                    // type === "dot"
+
+                    if(beatColor === "blue"){
+                        beat.destroyBeat();
+                        // collisionResults[0].object.el.attributes[0].ownerElement.parentEl.components.beat.destroyBeat();
+                    }
+                }
+            }
+        }
     },
     update: function (oldData) {
         var data = this.data;
