@@ -36,13 +36,12 @@ AFRAME.registerComponent('left-hand-controller', {
         window.requestAnimationFrame(test);
     },
     onHandMove: function(){
-        var camera = document.querySelector('#camera');
-        var cameraEl = camera.object3D.children[1];
-
-        const entities = document.querySelectorAll('[test]'); 
-  
+        var mouse = new THREE.Vector2();
         mouse.x = (leftHandPosition.x / window.innerWidth) * 2 - 1;
         mouse.y = - (leftHandPosition.y / window.innerHeight) * 2 + 1;
+
+        var cameraDiv = document.querySelector('#camera');
+        var cameraEl = cameraDiv.object3D.children[1];
 
         var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
         vector.unproject(cameraEl);
@@ -51,46 +50,36 @@ AFRAME.registerComponent('left-hand-controller', {
         var dir = vector.sub(cameraElPosition).normalize();
         var distance = - cameraElPosition.z / dir.z;
         var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
-
-        // position of the left hand.
         el.object3D.position.copy(pos);
-
         el.object3D.position.z = -0.2;
+
+
+        const camera = self.el.sceneEl.camera;
+        let raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, camera);
+
+        const entities = document.querySelectorAll('[test]'); 
 
         // Raycasting
         // ------------------------
         const entitiesObjects = [];
-        const leftHandVertices = el.object3D.el.object3D.children[0].geometry.vertices;
-        const leftHandMesh = el.object3D.el.object3D.children[0];
-        const leftHandPositionVector = el.object3D.position;
 
         if(Array.from(entities).length){
             for(var i = 0; i < Array.from(entities).length; i++){
                 const beatMesh = entities[i].object3D.el.object3D.el.object3D.el.object3D.children[0].children[1];
                 entitiesObjects.push(beatMesh);
             }
-            
-            var originPoint = leftHandPositionVector.clone();
-            var directionVector;
 
-             for (var vertexIndex = 0; vertexIndex < leftHandVertices.length; vertexIndex++) {
-                var localVertex = leftHandVertices[vertexIndex].clone();
-    
-                var globalVertex = localVertex.applyMatrix4(leftHandMesh.matrix);
-                var directionVector = globalVertex.sub(leftHandPositionVector);
+            let intersects = raycaster.intersectObjects(entitiesObjects, true);
+            if(intersects.length){
+                const beat = intersects[0].object.el.attributes[0].ownerElement.parentEl.components.beat;
+                const beatColor = beat.attrValue.color;
+                const beatType = beat.attrValue.type;
 
-                var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
-                var collisionResults = ray.intersectObjects(entitiesObjects);
-                if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
-                    const beat = collisionResults[0].object.el.attributes[0].ownerElement.parentEl.components.beat;
-                    const beatColor = beat.attrValue.color;
-                    const beatType = beat.attrValue.type;
-
-                    if(beatColor === "red"){
-                        if(beatType === "arrow" || beatType === "dot"){
-                            beat.destroyBeat();
-                        } 
-                    }
+                if(beatColor === "red"){
+                    if(beatType === "arrow" || beatType === "dot"){
+                        beat.destroyBeat();
+                    } 
                 }
             }
         }

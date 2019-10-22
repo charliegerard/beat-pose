@@ -30,7 +30,7 @@ AFRAME.registerComponent('right-hand-controller', {
     checkHands: function test() {
         if(rightHandPosition){
             if(rightHandPosition !== previousRightHandPosition){
-                self.onHandMoveTwo();
+                self.onHandMove();
                 previousRightHandPosition = rightHandPosition;
             }
         }
@@ -68,77 +68,8 @@ AFRAME.registerComponent('right-hand-controller', {
         // if(intersects.length){
         //     console.log('colls: ', intersects)
         // }
-        
     },
     onHandMove: function(){
-        var camera = document.querySelector('#camera');
-        var cameraEl = camera.object3D.children[1];
-
-        const entities = document.querySelectorAll('[test]'); 
-
-        mouse.x = (rightHandPosition.x / window.innerWidth) * 2 - 1;
-        mouse.y = - (rightHandPosition.y / window.innerHeight) * 2 + 1;
-        mouse.z = 10;
-
-        var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
-        vector.unproject(cameraEl);
-
-        var cameraElPosition = cameraEl.el.object3D.position;
-        var dir = vector.sub(cameraElPosition).normalize();
-        var distance = - cameraElPosition.z / dir.z;
-        var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
-        el.object3D.position.copy(pos);
-
-        el.object3D.position.z = -0.2;
-
-        // Raycasting
-        // ------------------------
-        const entitiesObjects = [];
-        const rightHandVertices = el.object3D.el.object3D.children[0].geometry.vertices;
-        const rightHandMesh = el.object3D.el.object3D.children[0];
-        const rightHandPositionVector = el.object3D.position;
-
-        if(Array.from(entities).length){
-            for(var i = 0; i < Array.from(entities).length; i++){
-                const beatMesh = entities[i].object3D.el.object3D.el.object3D.el.object3D.children[0].children[1];
-                entitiesObjects.push(beatMesh);
-            }
-            
-            var originPoint = rightHandPositionVector.clone();
-            var directionVector;
-
-             for (var vertexIndex = 0; vertexIndex < rightHandVertices.length; vertexIndex++) {
-                var localVertex = rightHandVertices[vertexIndex].clone();
-    
-                var globalVertex = localVertex.applyMatrix4(rightHandMesh.matrix);
-                var directionVector = globalVertex.sub(rightHandPositionVector);
-
-                var raycaster = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
-                // var collisionResults = ray.intersectObjects(entitiesObjects);
-                let camera = document.getElementById('camera');
-                camera = camera.object3D.children[1];
-                raycaster.setFromCamera( directionVector, camera );
-
-                let scene = document.getElementById('scene');
-                scene = scene.object3D.children[1];
-
-                // var collisionResults = raycaster.intersectObjects(entitiesObjects, true);
-                var collisionResults = raycaster.intersectObjects(scene.children, true);
-                if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
-                    const beat = collisionResults[0].object.el.attributes[0].ownerElement.parentEl.components.beat;
-                    const beatColor = beat.attrValue.color;
-                    const beatType = beat.attrValue.type;
-
-                    if(beatColor === "blue"){
-                        if(beatType === "arrow" || beatType === "dot"){
-                            beat.destroyBeat();
-                        } 
-                    }
-                }
-            }
-        }
-    },
-    onHandMoveTwo: function(){
         var mouse = new THREE.Vector2();
         mouse.x = (rightHandPosition.x / window.innerWidth) * 2 - 1;
         mouse.y = - (rightHandPosition.y / window.innerHeight) * 2 + 1; 
@@ -154,7 +85,6 @@ AFRAME.registerComponent('right-hand-controller', {
         var distance = - cameraElPosition.z / dir.z;
         var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
         el.object3D.position.copy(pos);
-
         el.object3D.position.z = -0.2;
 
         const camera = self.el.sceneEl.camera;
