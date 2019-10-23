@@ -27,14 +27,11 @@ AFRAME.registerComponent('beat', {
     color: {default: 'red', oneOf: ['red', 'blue']},
     cutDirection: {default: 'down'},
     debug: {default: true},
-    // horizontalPosition: {default: 'left', oneOf: ['left', 'right']},
     horizontalPosition: {default: 'middleleft', oneOf: ['left', 'middleleft', 'middleright', 'right']},
     size: {default: 0.40},
     speed: {default: 8.0},
     type: {default: 'arrow', oneOf: ['arrow', 'dot', 'mine']},
-    verticalPosition: {default: 'middle', oneOf: ['bottom', 'middle', 'top']},
-    // verticalPosition: {default: 'middle', oneOf: ['middle', 'top']},
-    // verticalPosition: {default: 'top'},
+    verticalPosition: {default: 'middle', oneOf: ['middle', 'top']},
     warmupPosition: {default: 0},
   },
 
@@ -82,7 +79,6 @@ AFRAME.registerComponent('beat', {
   },
 
   verticalPositions: {
-    bottom: 0.70,
     middle: 1.20,
     top: 1.70
   },
@@ -134,7 +130,7 @@ AFRAME.registerComponent('beat', {
     this.glow = this.el.sceneEl.components['pool__beat-glow'].requestEntity();
     this.blockEl.object3D.visible = true;
 
-    this.el.setAttribute('test', 'hello');
+    this.el.setAttribute('beatObject', 'beat');
     
     this.destroyed = false;
     this.el.object3D.visible = true;
@@ -169,28 +165,11 @@ AFRAME.registerComponent('beat', {
       position.z += this.data.speed * (timeDelta / 1000);
       rotation.z = this.startRotationZ;
 
-      // console.log(window.LEFT_WRIST.position.x)
-
-      // position of beats goes from -1 to 1;  normalized
-      // let x_trans = x - (window.innerWidth / 2);
-      // let y_trans = y - (window.innerHeight / 2);
-      // let x_norm = window.LEFT_WRIST.position.x / (window.innerWidth / 2);
-      // console.log(x_norm)
-      // let y_norm = y / (window.innerHeight / 2);
-
       if (oldPosition < -1 * SWORD_OFFSET && position.z >= -1 * SWORD_OFFSET) {
         this.returnToPoolTimeStart = time;
         if (this.data.type === 'mine') {
           this.destroyMine();
-        } else {
-          // document.onmousemove = (e) => {
-          //   // console.log('mouse', e.clientX)
-          //   if(e.clientX > position.x){
-          //     // this.destroyBeat()
-          //   }
-          // }
-          // this.destroyBeat();
-        }
+        } 
       }
     }
 

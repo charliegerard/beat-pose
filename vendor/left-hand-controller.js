@@ -58,7 +58,7 @@ AFRAME.registerComponent('left-hand-controller', {
         let raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(mouse, camera);
 
-        const entities = document.querySelectorAll('[test]'); 
+        const entities = document.querySelectorAll('[beatObject]'); 
 
         // Raycasting
         // ------------------------
