@@ -1,4 +1,3 @@
-let mouse = {x: 0, y: 0};
 let el, self;
 
 import {rightHandPosition} from './camera.js';
@@ -20,7 +19,6 @@ AFRAME.registerComponent('right-hand-controller', {
         this.geometry = new THREE.BoxGeometry(data.width, data.height, data.depth);
         this.material = new THREE.MeshStandardMaterial({color: data.color});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
-        // Set mesh on entity.
         el.setObject3D('mesh', this.mesh);
 
         // document.addEventListener('mousemove', this.onMouseMove);

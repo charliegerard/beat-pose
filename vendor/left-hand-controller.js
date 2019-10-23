@@ -1,4 +1,3 @@
-let mouse = {x: 0, y: 0};
 let el, self;
 
 import {leftHandPosition} from './camera.js';
