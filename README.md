@@ -6,7 +6,7 @@ Play a Beat Saber clone with hand movements using Tensorflow.js & Posenet, in th
 
 Live demo: [https://beat-pose.netlify.com/](https://beat-pose.netlify.com/)
 
-Blog post: 
+[Blog post](https://dev.to/devdevcharlie/playing-beat-saber-in-the-browser-with-body-movements-using-posenet-tensorflow-js-36km)
 
 
 ## Demo
