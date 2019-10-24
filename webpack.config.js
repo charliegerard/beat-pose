@@ -76,8 +76,8 @@ module.exports = {
   },
   entry: './src/index.js',
   output: {
-    path: __dirname,
-    filename: 'build/build.js'
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js'
   },
   plugins: PLUGINS,
   module: {

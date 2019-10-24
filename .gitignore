@@ -41,7 +41,7 @@ yarn.lock
 
 exports/
 *.sw*
-/build
+/dist
 
 dump.rdb
 .ghpages
