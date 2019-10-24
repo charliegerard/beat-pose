@@ -20,7 +20,7 @@ nunjucks.addGlobal('IS_PRODUCTION', process.env.NODE_ENV === 'production');
 nunjucks.addGlobal('COLORS', COLORS);
 
 // Initial Nunjucks render.
-fs.writeFileSync('index.html', nunjucks.render('index.html'));
+fs.writeFileSync('dist/index.html', nunjucks.render('dist/index.html'));
 
 // For development, watch HTML for changes to compile Nunjucks.
 // The production Express server will handle Nunjucks by itself.
@@ -30,7 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
       return;
     }
     try {
-      fs.writeFileSync('index.html', nunjucks.render('index.html'));
+      fs.writeFileSync('dist/index.html', nunjucks.render('dist/index.html'));
     } catch (e) {
       console.error(e);
     }
