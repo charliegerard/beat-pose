@@ -1,10 +1,10 @@
 # BeatPose
 
-Play a Beat Saber clone with hand movements using Tensorflow.js & Posenet, in the browser!
+Play a Beat Saber clone with hand movements using Tensorflow.js & Posenet, in the browser! 🎉
 
 *Based on the awesome work by [Supermedium](http://supermedium.com/) on the [beat saver viewer](https://github.com/supermedium/beatsaver-viewer).*
 
-Live demo:
+Live demo: [https://beat-pose.netlify.com/](https://beat-pose.netlify.com/)
 
 Blog post: 
 
@@ -15,7 +15,7 @@ Blog post:
 
 ## How to use
 
-* Visit the live demo: 
+* Visit the [live demo](https://beat-pose.netlify.com/)
 * Allow access to the webcam
 * Place yourself about 1-2m away from your computer in a place that has enough light.
 * Move your hands to see if the recognition works
