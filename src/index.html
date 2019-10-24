@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>BeatSaver Viewer</title>
+    <title>BeatPose</title>
     <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
     <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
@@ -12,7 +12,7 @@
     <script src="vendor/right-hand-controller.js" type="module"></script>
 
     {% if DEBUG_AFRAME %}
-      <script src="http://{{ HOST }}:9000/dist/aframe-master.js"></script>
+      <script src="https://{{ HOST }}:9000/dist/aframe-master.js"></script>
     {% elif IS_PRODUCTION %}
       <script src="vendor/aframe-master.min.js"></script>
     {% else %}
@@ -38,7 +38,7 @@
       cursor="rayOrigin: mouse"
       gpu-preloader
       {% if DEBUG_INSPECTOR %}
-        inspector="url: http://localhost:3333/dist/aframe-inspector.js"
+        inspector="url: https://localhost:3333/dist/aframe-inspector.js"
       {% else %}
         inspector="url: https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js"
       {% endif %}
