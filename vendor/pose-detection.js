@@ -1,4 +1,4 @@
-import {drawKeypoints, isMobile} from './demo_util.js';
+import {isMobile} from './demo_util.js';
 
 const videoWidth = window.innerWidth;
 const videoHeight = window.innerHeight;
@@ -29,23 +29,9 @@ async function setupCamera() {
   video.srcObject = stream;
 
   return new Promise((resolve) => {
-    video.onloadedmetadata = () => {
-      resolve(video);
-    };
+    video.onloadedmetadata = () => resolve(video);
   });
 }
-
-async function loadVideo() {
-  const video = await setupCamera();
-  video.play();
-
-  return video;
-}
-
-const defaultQuantBytes = 2;
-const defaultMobileNetMultiplier = isMobile() ? 0.50 : 0.75;
-const defaultMobileNetStride = 16;
-const defaultMobileNetInputResolution = 513;
 
 let net;
 
@@ -53,10 +39,10 @@ const guiState = {
   algorithm: 'single-pose',
   input: {
     architecture: 'MobileNetV1',
-    outputStride: defaultMobileNetStride,
-    inputResolution: defaultMobileNetInputResolution,
-    multiplier: defaultMobileNetMultiplier,
-    quantBytes: defaultQuantBytes
+    outputStride: 16,
+    inputResolution: 513,
+    multiplier: isMobile() ? 0.50 : 0.75,
+    quantBytes: 2
   },
   singlePoseDetection: {
     minPoseConfidence: 0.1,
@@ -87,10 +73,6 @@ function getRightHand(keypoints){
   }
 }
 
-/**
- * Feeds an image to posenet to estimate poses - this is where the magic
- * happens. This function loops with a requestAnimationFrame method.
- */
 function detectPoseInRealTime(video, net) {
   const canvas = document.getElementById('output');
   const ctx = canvas.getContext('2d');
@@ -131,15 +113,10 @@ function detectPoseInRealTime(video, net) {
       ctx.restore();
     }
 
-    // For each pose (i.e. person) detected in an image, loop through the poses
-    // and draw the resulting skeleton and keypoints if over certain confidence
-    // scores
     poses.forEach(({score, keypoints}) => {
       if (score >= minPoseConfidence) {
         if (guiState.output.showPoints) {
           handsKeyPoints = keypoints;
-          drawKeypoints(keypoints, minPartConfidence, ctx);
-
           leftHandPosition = getLeftHand(keypoints);
           rightHandPosition = getRightHand(keypoints);
         }
@@ -152,11 +129,7 @@ function detectPoseInRealTime(video, net) {
   poseDetectionFrame();
 }
 
-/**
- * Kicks off the demo by loading the posenet model, finding and loading
- * available camera devices, and setting off the detectPoseInRealTime function.
- */
-export async function bindPage() {
+export async function init() {
   guiState.net = await posenet.load({
     architecture: guiState.input.architecture,
     outputStride: guiState.input.outputStride,
@@ -168,7 +141,8 @@ export async function bindPage() {
   let video;
 
   try {
-    video = await loadVideo();
+    video = await setupCamera();
+    video.play();
   } catch (e) {
     throw e;
   }
@@ -177,5 +151,4 @@ export async function bindPage() {
 
 navigator.getUserMedia = navigator.getUserMedia ||
     navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-// kick off the demo
-bindPage();
+init();

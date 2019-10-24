@@ -1,7 +1,5 @@
 let el, self;
-
-import {leftHandPosition} from './camera.js';
- 
+import {leftHandPosition} from './pose-detection.js';
 let previousLeftHandPosition = {x: 0, y: 0, z: -0.2};
 
 AFRAME.registerComponent('left-hand-controller', {
@@ -19,48 +17,38 @@ AFRAME.registerComponent('left-hand-controller', {
         this.geometry = new THREE.BoxGeometry(data.width, data.height, data.depth);
         this.material = new THREE.MeshStandardMaterial({color: data.color});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
-
-        // Set mesh on entity.
         el.setObject3D('mesh', this.mesh);
-
-        window.requestAnimationFrame(this.checkHands);
     },
-    checkHands: function test() {
-        if(leftHandPosition){
-            if(leftHandPosition !== previousLeftHandPosition){
-                self.onHandMove();
-                previousLeftHandPosition = leftHandPosition;
-            }
+    update: function(){
+        this.checkHands();
+    },
+    checkHands: function getHandsPosition() {
+        if(leftHandPosition && leftHandPosition !== previousLeftHandPosition){
+            self.onHandMove();
+            previousLeftHandPosition = leftHandPosition;
         }
-        window.requestAnimationFrame(test);
+        window.requestAnimationFrame(getHandsPosition);
     },
     onHandMove: function(){
-        var mouse = new THREE.Vector2();
-        mouse.x = (leftHandPosition.x / window.innerWidth) * 2 - 1;
-        mouse.y = - (leftHandPosition.y / window.innerHeight) * 2 + 1;
+        const handVector = new THREE.Vector3();
+        handVector.x = (leftHandPosition.x / window.innerWidth) * 2 - 1;
+        handVector.y = - (leftHandPosition.y / window.innerHeight) * 2 + 1;
+        handVector.z = 0;
 
-        var cameraDiv = document.querySelector('#camera');
-        var cameraEl = cameraDiv.object3D.children[1];
+        const camera = self.el.sceneEl.camera;
+        handVector.unproject(camera);
 
-        var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
-        vector.unproject(cameraEl);
-
-        var cameraElPosition = cameraEl.el.object3D.position;
-        var dir = vector.sub(cameraElPosition).normalize();
-        var distance = - cameraElPosition.z / dir.z;
-        var pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
+        const cameraElPosition = camera.el.object3D.position;
+        const dir = handVector.sub(cameraElPosition).normalize();
+        const distance = - cameraElPosition.z / dir.z;
+        const pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
         el.object3D.position.copy(pos);
         el.object3D.position.z = -0.2;
 
-
-        const camera = self.el.sceneEl.camera;
-        let raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(mouse, camera);
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(handVector, camera);
 
         const entities = document.querySelectorAll('[beatObject]'); 
-
-        // Raycasting
-        // ------------------------
         const entitiesObjects = [];
 
         if(Array.from(entities).length){
