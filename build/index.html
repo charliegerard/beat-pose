@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BeatPose</title>
+    <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
+    <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
+    <script src="vendor/pose-detection.js" type="module"></script>
+    <script src="vendor/left-hand-controller.js" type="module"></script>
+    <script src="vendor/right-hand-controller.js" type="module"></script>
+
+    
+      <script src="vendor/aframe-master.min.js"></script>
+    
+    <script src="dist/bundle.js"></script>
+
+  </head>
+  <body>
+    <a-scene
+      mixin="bgColorAnimation tunnelColorAnimation leftLaserColorAnimation rightLaserColorAnimation textGlowColorAnimation floorColorAnimation"
+      bind__beat-generator="difficulty: challenge.difficulty; isPlaying: isPlaying"
+      bind__pauser="enabled: isPlaying"
+      bind__song="audio: challenge.audio; difficulty: challenge.difficulty; isPaused: isPaused; isPlaying: isPlaying; hasReceivedUserGesture: hasReceivedUserGesture; isBeatsPreloaded: challenge.isBeatsPreloaded"
+      bind__song-controls="difficulty: challenge.difficulty; isPlaying: isPlaying; songName: challenge.songName; songSubName: challenge.songSubName; songImage: challenge.image"
+      bind__zip-loader="difficulty: challenge.difficulty; id: challenge.id; isSafari: isSafari"
+      console-shortcuts
+      id="scene"
+      debug-controller
+      debug-song-time
+      debug-state
+      hack
+      cursor="rayOrigin: mouse"
+      gpu-preloader
+      
+        inspector="url: https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js"
+      
+      iframe-url
+      loading-screen="backgroundColor: #000;"
+      pool__beat-arrow-blue="mixin: arrowBlueBeat; size: 10; container: #beatContainer"
+      pool__beat-arrow-red="mixin: arrowRedBeat; size: 10; container: #beatContainer"
+      pool__beat-dot-blue="mixin: dotBlueBeat; size: 10; container: #beatContainer"
+      pool__beat-dot-red="mixin: dotRedBeat; size: 10; container: #beatContainer"
+      pool__beat-mine="mixin: mine; size: 12; container: #beatContainer"
+      pool__beat-glow="mixin: beatGlow; size: 20; container: #glowContainer"
+      pool__wall="mixin: wall; size: 30; container: #beatContainer"
+      proxy-event__cleargame="event: gamemenurestart; as: cleargame; to: a-scene"
+      proxy-event__pausegame="event: pausegame; as: textglowoff; to: a-scene"
+      proxy-event__resumegame="event: gamemenuresume; as: textglownormal; to: a-scene"
+      search
+      stage-colors="color: blue"
+      stats-param
+      vr-mode-ui="enabled: false"
+      user-gesture
+      tutorial-2d>
+
+      <a-assets timeout="10000">
+        <a-asset-item id="arrowredObj" src="assets/models/arrowred.obj"></a-asset-item>
+<a-asset-item id="arrowblueObj" src="assets/models/arrowblue.obj"></a-asset-item>
+<a-asset-item id="dotredObj" src="assets/models/dotred.obj"></a-asset-item>
+<a-asset-item id="dotblueObj" src="assets/models/dotblue.obj"></a-asset-item>
+<a-asset-item id="backglowObj" src="assets/models/backglow.obj"></a-asset-item>
+<a-asset-item id="beatObj" src="assets/models/beat.obj"></a-asset-item>
+<a-asset-item id="laserObj" src="assets/models/laser/laser.obj"></a-asset-item>
+<a-asset-item id="sparksJSON" src="assets/models/sparks.json"></a-asset-item>
+<a-asset-item id="mineObj" src="assets/models/mine.obj"></a-asset-item>
+<a-asset-item id="mineBrokenObj" src="assets/models/minebroken.obj"></a-asset-item>
+<a-asset-item id="mineParticlesJSON" src="assets/models/mineparticles.json"></a-asset-item>
+<a-asset-item id="saberParticlesJSON" src="assets/models/sabercut.json"></a-asset-item>
+<a-asset-item id="stageNormalObj" src="assets/models/stagenormal.obj"></a-asset-item>
+<a-asset-item id="stageAdditiveObj" src="assets/models/stageadditive.obj"></a-asset-item>
+<a-asset-item id="smokeObj" src="assets/models/smoke.obj"></a-asset-item>
+<a-asset-item id="audiocolumnObj" src="assets/models/audiocolumn.obj"></a-asset-item>
+<a-asset-item id="leftLaserObj" src="assets/models/leftlaser.obj"></a-asset-item>
+<a-asset-item id="rightLaserObj" src="assets/models/rightlaser.obj"></a-asset-item>
+<a-asset-item id="redbeamObj" src="assets/models/redbeam.obj"></a-asset-item>
+<a-asset-item id="bluebeamObj" src="assets/models/bluebeam.obj"></a-asset-item>
+<a-asset-item id="logoBackObj" src="assets/models/logoback.obj"></a-asset-item>
+<a-asset-item id="logoObj" src="assets/models/logo.obj"></a-asset-item>
+<a-asset-item id="logoGlowObj" src="assets/models/logoglow.obj"></a-asset-item>
+
+<audio id="confirmSound" src="assets/sounds/beatHit.ogg"></audio>
+<audio id="hoverSound" src="assets/sounds/hover.ogg"></audio>
+
+
+<audio id="hitSound1" src="assets/sounds/hit1.ogg"></audio>
+<audio id="hitSound1left" src="assets/sounds/hit1left.ogg"></audio>
+<audio id="hitSound1right" src="assets/sounds/hit1right.ogg"></audio>
+
+<audio id="hitSound2" src="assets/sounds/hit2.ogg"></audio>
+<audio id="hitSound2left" src="assets/sounds/hit2left.ogg"></audio>
+<audio id="hitSound2right" src="assets/sounds/hit2right.ogg"></audio>
+
+<audio id="hitSound3" src="assets/sounds/hit3.ogg"></audio>
+<audio id="hitSound3left" src="assets/sounds/hit3left.ogg"></audio>
+<audio id="hitSound3right" src="assets/sounds/hit3right.ogg"></audio>
+
+<audio id="hitSound4" src="assets/sounds/hit4.ogg"></audio>
+<audio id="hitSound4left" src="assets/sounds/hit4left.ogg"></audio>
+<audio id="hitSound4right" src="assets/sounds/hit4right.ogg"></audio>
+
+<audio id="hitSound5" src="assets/sounds/hit5.ogg"></audio>
+<audio id="hitSound5left" src="assets/sounds/hit5left.ogg"></audio>
+<audio id="hitSound5right" src="assets/sounds/hit5right.ogg"></audio>
+
+<audio id="hitSound6" src="assets/sounds/hit6.ogg"></audio>
+<audio id="hitSound6left" src="assets/sounds/hit6left.ogg"></audio>
+<audio id="hitSound6right" src="assets/sounds/hit6right.ogg"></audio>
+
+<audio id="hitSound7" src="assets/sounds/hit7.ogg"></audio>
+<audio id="hitSound7left" src="assets/sounds/hit7left.ogg"></audio>
+<audio id="hitSound7right" src="assets/sounds/hit7right.ogg"></audio>
+
+<audio id="hitSound8" src="assets/sounds/hit8.ogg"></audio>
+<audio id="hitSound8left" src="assets/sounds/hit8left.ogg"></audio>
+<audio id="hitSound8right" src="assets/sounds/hit8right.ogg"></audio>
+
+<audio id="hitSound9" src="assets/sounds/hit9.ogg"></audio>
+<audio id="hitSound9left" src="assets/sounds/hit9left.ogg"></audio>
+<audio id="hitSound9right" src="assets/sounds/hit9right.ogg"></audio>
+
+<audio id="hitSound10" src="assets/sounds/hit10.ogg"></audio>
+<audio id="hitSound10left" src="assets/sounds/hit10left.ogg"></audio>
+<audio id="hitSound10right" src="assets/sounds/hit10right.ogg"></audio>
+
+
+<img id="cursorMeshImg" src="assets/models/laser/laser.png">
+<img id="envmapTexture" src="assets/img/envmap.jpg">
+<img id="neonImg" src="assets/img/neon.png">
+<img id="sliceImg" src="assets/img/slice.png">
+<img id="slicebtnImg" src="assets/img/slicebtn.png">
+<img id="sparkImg" src="assets/img/spark.png">
+<img id="spark2Img" src="assets/img/spark2.png">
+<img id="floorEnvImg" src="assets/img/floorenv.jpg">
+<img id="floorNormalsImg" src="assets/img/floornormals.png">
+<img id="atlasImg" src="assets/img/atlas.png">
+<img id="logotexImg" src="assets/img/logotex.png">
+<img id="glowImg" src="assets/img/glow.png">
+
+<a-mixin id="slice" slice9="color: #050505; transparent: true; opacity: 0.9; src: #sliceImg; left: 50; right: 52; top: 50; bottom: 52; padding: 0.18"></a-mixin>
+<a-mixin id="font" text="font: assets/fonts/Teko-Bold.json; shader: msdf; letterSpacing: 1"></a-mixin>
+<a-mixin id="superKeyboardTextInput" mixin="font"></a-mixin>
+
+
+<a-mixin id="beat" visible="false"></a-mixin>
+<a-mixin id="beatBlock"></a-mixin>
+<a-mixin id="beatSign"></a-mixin>
+<a-mixin id="arrowBlueBeat" mixin="beat" beat="color: blue; type: arrow"></a-mixin>
+<a-mixin id="arrowRedBeat" mixin="beat" beat="color: red; type: arrow"></a-mixin>
+<a-mixin id="dotBlueBeat" mixin="beat" beat="color: blue; type: dot"></a-mixin>
+<a-mixin id="dotRedBeat" mixin="beat" beat="color: red; type: dot"></a-mixin>
+<a-mixin id="gameoverAnimation" animation__gameover="dur: 1000; easing: easeOutQuad"></a-mixin>
+<a-mixin id="mine" mixin="beat" beat="type: mine"></a-mixin>
+
+<a-mixin
+  id="beatGlow"
+  geometry="primitive: plane; width: 0.7; height: 0.7"
+  material="shader: flat; fog: false; blending: additive; depthTest: false; transparent: true; src: #glowImg; opacity: 1"
+  animation__opacity="property: components.material.material.opacity; from: 0.9; to: 0; dur: 300; easing: linear; startEvents: explode"
+  animation__scale="property: scale; from: 0.5 0.5 1; to: 1.5 1.5 1; dur: 300; easing: easeOutQuad; startEvents: explode"></a-mixin>
+
+<a-mixin
+  id="wall"
+  geometry
+  material="shader: wallShader; transparent: true; side: double;"
+  wall></a-mixin>
+
+<a-mixin
+  id="bigMenuButton"
+  mixin="slice"
+  slice9="src: #slicebtnImg; color: #CCC; width: 1; right:  52;  bottom:  47; left: 77; top: 73; height: 0.22; padding: 0.1"
+  animation__mouseenter1="property: components.slice9.material.color; type: color; from: #CCC; to: #FFF; startEvents: mouseenter; pauseEvents: mouseleave; dur: 150"
+  animation__mouseleave1="property: components.slice9.material.color; type: color; from: #FFF; to: #CCC; startEvents: mouseleave; pauseEvents: mouseenter; dur: 150"
+  animation__mouseenter2="property: scale; from: 1 1 1; to: 1.04 1.04 1.04; startEvents: mouseenter; pauseEvents: mouseleave; dur: 80"
+  animation__mouseleave2="property: scale; to: 1 1 1; from: 1.04 1.04 1.04; startEvents: mouseleave; pauseEvents: mouseenter; dur: 80"></a-mixin>
+
+<!-- Stage, neons, animations launched from beat-generator events. -->
+<a-mixin id="bgColorAnimation"
+  animation__bgcoloroff="isRawProperty: true; property: systems.materials.stageNormal.uniforms.backglowColor.value; type: color; to: #081a0f; dur: 500; easing: linear; startEvents: bgcoloroff"
+  animation__bgcolorblue="isRawProperty: true; property: systems.materials.stageNormal.uniforms.backglowColor.value; type: color; to: #379f5e; dur: 5; easing: linear; startEvents: bgcolorblue"
+  animation__bgcolorbluefade="isRawProperty: true; property: systems.materials.stageNormal.uniforms.backglowColor.value; type: color; from: #4fd983; to: #379f5e; dur: 500; easing: linear; startEvents: bgcolorbluefade"
+  animation__bgcolorred="isRawProperty: true; property: systems.materials.stageNormal.uniforms.backglowColor.value; type: color; to: #ff1f81; dur: 5; easing: linear; startEvents: bgcolorred"
+  animation__bgcolorredfade="isRawProperty: true; property: systems.materials.stageNormal.uniforms.backglowColor.value; type: color; from: #ff6bb0; to: #ff1f81; dur: 500; easing: linear; startEvents: bgcolorredfade"
+  animation__skycoloroff="isRawProperty: true; property: systems.materials.stageNormal.uniforms.skyColor.value; type: color; to: #297547; dur: 500; easing: linear; startEvents: bgcoloroff"
+  animation__skycolorblue="isRawProperty: true; property: systems.materials.stageNormal.uniforms.skyColor.value; type: color; to: #840d42; dur: 5; easing: linear; startEvents: bgcolorblue"
+  animation__skycolorred="isRawProperty: true; property: systems.materials.stageNormal.uniforms.skyColor.value; type: color; to: #154136; dur: 5; easing: linear; startEvents: bgcolorred"
+  animation__bgcolorgameover="isRawProperty: true; property: systems.materials.stageNormal.uniforms.backglowColor.value; type: color; to: #081a0f; dur: 500; easing: linear; startEvents: bgcolorgameover"
+  animation__skycolorgameover="isRawProperty: true; property: systems.materials.stageNormal.uniforms.skyColor.value; type: color; to: #840d42; dur: 5; easing: linear; startEvents: bgcolorgameover"></a-mixin>
+
+<a-mixin id="tunnelColorAnimation"
+  animation__tunnelcoloroff="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.tunnelNeon.value; type: color; to: #000; dur: 500; easing: linear; startEvents: tunnelcoloroff"
+  animation__tunnelcolorblue="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.tunnelNeon.value; type: color; to: #008a70; dur: 5; easing: linear; startEvents: tunnelcolorblue"
+  animation__tunnelcolorbluefade="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.tunnelNeon.value; type: color; from: #87c2ff; to: #008a70; dur: 500; easing: linear; startEvents: tunnelcolorbluefade"
+  animation__tunnelcolorred="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.tunnelNeon.value; type: color; to: #f01978; dur: 5; easing: linear; startEvents: tunnelcolorred"
+  animation__tunnelcolorredfade="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.tunnelNeon.value; type: color; from: #ff70b5; to: #f01978; dur: 500; easing: linear; startEvents: tunnelcolorredfade"></a-mixin>
+
+<a-mixin id="floorColorAnimation"
+  animation__floorcoloroff="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.floorNeon.value; type: color; to: #000; dur: 500; easing: linear; startEvents: floorcoloroff"
+  animation__floorcolorblue="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.floorNeon.value; type: color; to: #008a70; dur: 5; easing: linear; startEvents: floorcolorblue"
+  animation__floorcolorbluefade="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.floorNeon.value; type: color; from: #87c2ff; to: #008a70; dur: 500; easing: linear; startEvents: floorcolorbluefade"
+  animation__floorcolorred="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.floorNeon.value; type: color; to: #f01978; dur: 5; easing: linear; startEvents: floorcolorred"
+  animation__floorcolorredfade="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.floorNeon.value; type: color; from: #ff70b5; to: #f01978; dur: 500; easing: linear; startEvents: floorcolorredfade"></a-mixin>
+
+<a-mixin id="leftLaserColorAnimation"
+  animation__leftlasercoloroff="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.leftLaser.value; type: color; to: #000; dur: 500; easing: linear; startEvents: leftlasercoloroff"
+  animation__leftlasercolorblue="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.leftLaser.value; type: color; to: #008a70; dur: 5; easing: linear; startEvents: leftlasercolorblue"
+  animation__leftlasercolorbluefade="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.leftLaser.value; type: color; from: #87c2ff; to: #008a70; dur: 500; easing: linear; startEvents: leftlasercolorbluefade"
+  animation__leftlasercolorred="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.leftLaser.value; type: color; to: #f01978; dur: 5; easing: linear; startEvents: leftlasercolorred"
+  animation__leftlasercolorredfade="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.leftLaser.value; type: color; from: #ff70b5; to: #f01978; dur: 500; easing: linear; startEvents: leftlasercolorredfade"></a-mixin>
+
+<a-mixin id="rightLaserColorAnimation"
+  animation__rightlasercoloroff="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.rightLaser.value; type: color; to: #000; dur: 500; easing: linear; startEvents: rightlasercoloroff"
+  animation__rightlasercolorblue="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.rightLaser.value; type: color; to: #008a70; dur: 5; easing: linear; startEvents: rightlasercolorblue"
+  animation__rightlasercolorbluefade="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.rightLaser.value; type: color; from: #87c2ff; to: #008a70; dur: 500; easing: linear; startEvents: rightlasercolorbluefade"
+  animation__rightlasercolorred="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.rightLaser.value; type: color; to: #f01978; dur: 5; easing: linear; startEvents: rightlasercolorred"
+  animation__rightlasercolorredfade="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.rightLaser.value; type: color; from: #ff70b5; to: #f01978; dur: 500; easing: linear; startEvents: rightlasercolorredfade"></a-mixin>
+
+<a-mixin id="textGlowColorAnimation"
+  animation__textglowoff="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.textGlow.value; type: color; to: #000; dur: 5; easing: easeInOutCubic; startEvents: textglowoff"
+  animation__textglownormal="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.textGlow.value; type: color; to: #444; dur: 750; easing: easeInOutCubic; delay: 100; startEvents: textglownormal"
+  animation__textglowbold="isRawProperty: true; property: systems.materials.stageAdditive.uniforms.textGlow.value; type: color; from: #888; to: #444; dur: 500; easing: easeInOutCubic; startEvents: textglowbold"
+  ></a-mixin>
+
+      </a-assets>
+
+      <a-entity id="beatObjTemplate" obj-model="obj: #beatObj" visible="false"></a-entity>
+      <a-entity id="arrowRedObjTemplate" obj-model="obj: #arrowredObj" visible="false"></a-entity>
+      <a-entity id="arrowBlueObjTemplate" obj-model="obj: #arrowblueObj" visible="false"></a-entity>
+      <a-entity id="dotRedObjTemplate" obj-model="obj: #dotredObj" visible="false"></a-entity>
+      <a-entity id="dotBlueObjTemplate" obj-model="obj: #dotblueObj" visible="false"></a-entity>
+      <a-entity id="mineObjTemplate" obj-model="obj: #mineObj" visible="false"></a-entity>
+      <a-entity id="cursorLaser" obj-model="obj: #laserObj" visible="false"></a-entity>
+
+      <a-entity id="beatContainer" bind__pause="isPaused: !isPlaying" beat-hit-sound></a-entity>
+
+      <a-entity
+  id="audioAnalyser"
+  bind__audioanalyser="beatDetectionThrottle: menuActive && 5000 || 1000"
+  audioanalyser="src: #introSong; fftSize: 64; enableBeatDetection: true; enableLevels: false; enableWaveform: false; beatDetectionThrottle: 5000; unique: true"
+  proxy-event="event: audioanalyserbeat; to: #logolight"></a-entity>
+
+<a-entity id="stage">
+  <a-entity
+    id="audioColumns"
+    audio-columns="analyser: #audioAnalyser; height: 28; mirror: 18; scale: 9; thickness: 0.6; separation: 0.55"
+    position="0 -19 5"></a-entity>
+
+  <a-entity id="stageObj" obj-model="obj: #stageNormalObj" materials="name: stageNormal"></a-entity>
+
+  <!-- Lasers left. -->
+  <a-entity id="leftStageLasers" bind__stage-lasers="enabled: isPlaying">
+    <a-entity obj-model="obj: #leftLaserObj" materials="name: stageAdditive" position="-6 2.3 -41"></a-entity>
+    <a-entity obj-model="obj: #leftLaserObj" materials="name: stageAdditive" position="-10 0 -40"></a-entity>
+    <a-entity obj-model="obj: #leftLaserObj" materials="name: stageAdditive" position="-14 -3 -39"></a-entity>
+  </a-entity>
+
+  <!-- Lasers right. -->
+  <a-entity id="rightStageLasers" bind__stage-lasers="enabled: isPlaying">
+    <a-entity obj-model="obj: #rightLaserObj" materials="name: stageAdditive" position="6 4 -38"></a-entity>
+    <a-entity obj-model="obj: #rightLaserObj" materials="name: stageAdditive" position="10 2 -37"></a-entity>
+    <a-entity obj-model="obj: #rightLaserObj" materials="name: stageAdditive" position="14 -1.5 -36"></a-entity>
+  </a-entity>
+
+  <a-entity id="twister" position="0 0 -35" rotation="90 0 0" bind__twister="enabled: isPlaying"></a-entity>
+
+  <a-entity id="beams" bind__beams="isPlaying: isPlaying"></a-entity>
+
+  <a-entity
+    id="stageadditiveobj"
+    obj-model="obj: #stageAdditiveObj"
+    materials="name: stageAdditive"></a-entity>
+
+  <a-entity id="logo" bind__visible="!isPlaying" position="0 4.75 -5" rotation="90 0 0">
+    <a-entity id="logoBackObj" obj-model="obj: #logoBackObj" materials="name: logoadditive"></a-entity>
+    <a-entity id="logoBody" obj-model="obj: #logoObj" materials="name: logo"></a-entity>
+    <a-entity id="logoGlowObj" obj-model="obj: #logoGlowObj" materials="name: logoadditive"></a-entity>
+  </a-entity>
+
+  <a-entity
+    id="smoke"
+    animation__rotate="property: rotation; to: 0 360 0; easing: linear; loop: true; dur: 200000"
+    obj-model="obj: #smokeObj"
+    material="src: #atlasImg; shader: flat; transparent: true; depthWrite: false"
+    position="0 1.4 0"></a-entity>
+
+  <a-entity light="type: directional; intensity: 3" position="0 10 10"></a-entity>
+
+  <a-entity
+    id="floor"
+    data-saber-particles
+    geometry="primitive: plane; width: 3; height: 3"
+    rotation="-90 0 0"
+    material="shader: floorShader; normalMap: #floorNormalsImg; envMap: #floorEnvImg; hitLeft: -999 0 0; hitRight: -999 0 0"
+    raycastable-game
+    stepback></a-entity>
+
+  <a-entity
+    id="songProgressRing"
+    bind__song-progress-ring="enabled: isPlaying && challenge.isBeatsPreloaded"
+    bind__visible="isPlaying && challenge.isBeatsPreloaded"
+    geometry="primitive: plane; width: 0.1; height: 0.1"
+    material="shader: ring; progress: 0; transparent: true; radiusInner: 0.5; color: #ABABAB"
+    position="0 0.1 -1.5"
+    rotation="-45 0 0">
+  </a-entity>
+</a-entity>
+
+      <a-mixin
+  id="gameMenuButton"
+  mixin="bigMenuButton"
+  animation__mouseenter="property: components.slice9.material.color; type: color; from: #CCC; to: #FAFAFA; startEvents: mouseenter; pauseEvents: mouseleave; dur: 150"
+  animation__mouseleave="property: components.slice9.material.color; type: color; from: #FAFAFA; to: #CCC; startEvents: mouseleave; pauseEvents: mouseenter; dur: 150"
+  slice9="width: 1; height: 0.27;"></a-mixin>
+
+<a-mixin
+  id="gameMenuButtonText"
+  mixin="font"
+  position="0 -0.08 0.01"
+  text="align: center; wrapCount: 17; color: #FFF"></a-mixin>
+
+<!-- Titles. -->
+<a-entity id="inGameMenuTitles" position="0 1.7 -2.3">
+  <a-entity mixin="gameMenuButtonText" text="value: PAUSED; color: #FAFAFA; width: 4" bind__visible="isPaused"></a-entity>
+</a-entity>
+
+<a-entity
+  id="gameMenu"
+  bind__visible="isPaused"
+  position="0 1.1 -2"
+  play-sound="event: mouseenter; sound: #hoverSound; volume: 0.03"
+  play-sound__click="event: click; sound: #confirmSound; volume: 0.25">
+
+  <!-- Actions. -->
+  <a-entity
+    id="resumeButton"
+    mixin="gameMenuButton"
+    bind__visible-raycastable="isPaused"
+    position="0 0.35 0"
+    proxy-event="event: click; to: a-scene; as: gamemenuresume">
+    <a-entity mixin="gameMenuButtonText" text="value: RESUME"></a-entity>
+  </a-entity>
+
+  <a-entity
+    id="restartButton"
+    mixin="gameMenuButton"
+    bind__visible-raycastable="isPaused"
+    proxy-event="event: click; to: a-scene; as: gamemenurestart">
+    <a-entity mixin="gameMenuButtonText" text="value: RESTART SONG"></a-entity>
+  </a-entity>
+</a-entity>
+
+
+      <a-entity
+  id="loadingSongInfoContainer"
+  bind__animation__scale="enabled: challenge.isLoading || !hasReceivedUserGesture && !challenge.hasLoadError"
+  bind__visible="challenge.isLoading || !hasReceivedUserGesture || challenge.hasLoadError"
+  animation__scale="property: scale; from: 1 1 1; to: 1.05 1.05 1.05; dir: alternate; loop: true; dur: 1200; easing: easeInOutCubic"
+  position="0 1.5 -1">
+
+  <a-entity mixin="slice" slice9="opacity: 0.9; width: 0.77; height: 1.15; padding: 0.08" position="0 -0.09 -0.03"></a-entity>
+
+  <a-entity id="loadingSongImage"
+    bind__blob-texture="src: challenge.image"
+    geometry="primitive: plane; buffer: false; skipCache: true; height: 0.3; width: 0.3"
+    material="shader: flat; transparent: true"
+    position="0 0.24 0"
+    bind__visible="!!challenge.image && !challenge.hasLoadError"></a-entity>
+
+  <a-entity id="loadingSongInfo">
+    <a-entity position="0 -0.05 0" mixin="font"
+      text="wrapCount: 40; align: center; color: #FF185B"
+      bind__text="value: challenge.songSubNameShort"></a-entity>
+    <a-entity position="0 -0.13 0"
+      mixin="font" text="align: center; color: #FFF; wrapCount: 21; baseline: top; lineHeight: 36; width: 0.81"
+      bind__text="value: challenge.songNameShort"></a-entity>
+
+    <a-entity
+      id="loadingText"
+      mixin="font"
+      bind__text="value: isSongBufferProcessing && 'Processing audio...' || 'Downloading song...'"
+      bind__visible="challenge.isLoading || isSongBufferProcessing && !challenge.hasLoadError"
+      text="align: center; color: #FAFAFA; wrapCount: 18; width: 0.65"
+      position="0 -0.32 0.001"></a-entity>
+
+    <a-entity
+      id="loadingErrorText"
+      mixin="font"
+      bind__text="value: challenge.loadErrorText"
+      bind__visible="challenge.hasLoadError"
+      text="align: center; color: #FAFAFA; wrapCount: 18; width: 0.65"
+      position="0 -0.09437 0.001"></a-entity>
+
+    <a-entity
+      id="challengeLoadingIndicator"
+      bind__visible="challenge.isLoading || isSongBufferProcessing"
+      geometry="primitive: plane; height: 0.1; width: 0.1"
+      material="shader: ring; color: #FAFAFA; radiusInner: 0.2; radiusOuter: 0.9; progress: 0; transparent: true"
+      position="0 -0.38 0.002"
+      visible="false">
+    </a-entity>
+
+    <a-entity
+      id="songProcessingIndicator"
+      bind__animation__spin="enabled: isSongBufferProcessing"
+      bind__visible="isSongBufferProcessing"
+      animation__spin="property: object3D.rotation.z; from: 0; to: -360; easing: linear; dur: 1000; loop: true"
+      geometry="primitive: plane; height: 0.2; width: 0.2"
+      material="shader: ring; color: #ABABAB; radiusInner: 0.2; radiusOuter: 0.4; transparent: true; progress: 0.2"
+      position="0 -0.38 0.004"
+      visible="false">
+    </a-entity>
+
+    <a-entity
+      id="loadingGestureButton"
+      mixin="bigMenuButton"
+      bind__visible-raycastable="!challenge.isLoading && !isPlaying && !isPaused && !hasReceivedUserGesture && !isSongBufferProcessing && !challenge.hasLoadError"
+      position="0 -0.31923 0.01"
+      proxy-event="event: click; to: a-scene; as: usergesturereceive"
+      slice9="width: 0.725"
+      visible="false">
+      <a-entity id="loadingGestureText" mixin="font" text="align: center; color: #FAFAFA; wrapCount: 40; value: CLICK ANYWHERE TO PLAY" position="0 -0.0329 0.001"></a-entity>
+      <a-entity id="moonrider" mixin="font" text="align: center; color: #FAFAFA; baseline: top; wrapCount: 50; value: For another viewer,\ncheck out moonrider.xyz" position="0 -0.184 0.001"></a-entity>
+    </a-entity>
+  </a-entity>
+</a-entity>
+
+
+      <a-entity id="glowContainer"></a-entity>
+
+      <a-entity
+        id="saberParticles"
+        particleplayer="src: #saberParticlesJSON; interpolate: true; pscale: 0.55; dur: 800; loop: false; on: explode; img: #sparkImg; count: 20%; animateScale: true; initialScale: 4 1 1; finalScale: 0.2 0.2 1"></a-entity>
+      <a-entity
+        id="mineParticles"
+        particleplayer="src: #mineParticlesJSON; pscale: 0.5; interpolate: true; scale: 1.4; loop: false; on: explode; img: #sparkImg; count: 20%; animateScale: true; initialScale: 3 1 1; finalScale: 0.2 0.2 1"></a-entity>
+      <a-entity
+        id="sparkParticles"
+        particleplayer="src: #sparksJSON; color: #fcc; pscale: 0.5; on: explode; scale: 0.12; loop: false; img: #spark2Img; dur: 700; count: 50%; animateScale: true; initialScale: 3 0.5 1; finalScale: 0.1 0.5 1"></a-entity>
+
+      <a-mixin
+        id="cursorMesh"
+        material="shader: flat; transparent: true; src: #cursorMeshImg; depthTest: false"
+        ></a-mixin>
+
+      <!-- Player. -->
+      <a-entity id="cameraRig">
+        <a-entity id="camera" position="0 1.6 0.5" camera look-controls wasd-controls>
+          <a-entity
+            id="cameraCollider"
+            geometry="primitive: box; width: 0.10; height: 0.10; depth: 0.10"
+            visible="false"></a-entity>
+        </a-entity>
+      </a-entity>
+
+      <a-entity
+        id="mouseCursor"
+        bind__raycaster="enabled: !inVR"
+        mixin="raycaster"
+        cursor="rayOrigin: mouse"
+        raycaster="objects: [raycastable]"></a-entity>
+
+      <a-entity
+        id="mouseCursorMesh"
+        mixin="cursorMesh"
+        cursor-mesh="cursorEl: #mouseCursor"
+        bind__cursor-mesh="active: menuActive"></a-entity>
+
+      <a-entity id="left-hand" left-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #660338" position="-1 1 -0.2"></a-entity>
+      <a-entity id="right-hand" right-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #036657" position="1 1 -0.2"></a-entity>
+    </a-scene>
+
+    <div id="controls">
+  <a id="logo" href="https://supermedium.com" title="Made by Supermedium, the browser for the VR Internet."><img src="assets/img/logo.png"></a>
+
+  <a id="controlsVolume"><img src="assets/img/volume.svg"></a>
+
+  <div id="volumeSliderContainer">
+    <input id="volumeSlider" type="range" type="range" min="0" max="1" step="0.01"></input>
+  </div>
+
+  <a id="controlsPause" href="#"><svg id="pause" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path id="pauseSymbol" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="#fff"/><path d="M0 0h24v24H0z" fill="none"/></svg></a>
+
+  <div id="timeline">
+    <div id="timelineLine">
+      <div id="playhead"></div>
+    </div>
+    <p id="timelineHover"></p>
+  </div>
+
+  <p id="songTime">
+    <span id="songProgress">0:00</span>
+    /
+    <span id="songDuration">-:--</span>
+  </p>
+
+  <div id="songInfoContainer">
+    <img id="songImage">
+    <div id="songInfo">
+      <p id="songSubName"></p>
+      <p id="songName"></p>
+    </div>
+    <div id="songInfoSelect">
+      <p id="controlsDifficulty"></p>
+      <ul id="controlsDifficultyOptions">
+        <li data-difficulty="Easy">Easy</li>
+        <li data-difficulty="Normal">Normal</li>
+        <li data-difficulty="Hard">Hard</li>
+        <li data-difficulty="Expert">Expert</li>
+        <li data-difficulty="ExpertPlus">ExpertPlus</li>
+      </ul>
+      <div id="searchToggle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="13"><g stroke-width="1.5" stroke="#CCC" fill="none"><path d="M11.29 11.71l-4-4"/><circle cx="5" cy="5" r="4"/></g></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a href="https://github.com/charliegerard/beat-pose" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <video id="video" playsinline style=" -moz-transform: scaleX(-1);
+      -o-transform: scaleX(-1);
+      -webkit-transform: scaleX(-1);
+      transform: scaleX(-1);
+    ">
+    </video>
+    <canvas id="output" style='position: absolute; top: 0; left: 0; z-index: 1;'></canvas>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111391431-15"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-111391431-15');
+</script>
+
+
+    <div id="search"></div>
+    <span id="iframeUrl"></span>
+  <script type="text/javascript" src="bundle.js"></script></body>
+</html>

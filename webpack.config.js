@@ -6,6 +6,7 @@ var ip = require('ip');
 var path = require('path');
 var webpack = require('webpack');
 const COLORS = require('./src/constants/colors.js');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // Set up templating.
 var nunjucks = Nunjucks.configure(path.resolve(__dirname, 'src'), {
@@ -37,7 +38,7 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-PLUGINS = [new webpack.EnvironmentPlugin(['NODE_ENV'])];
+PLUGINS = [new webpack.EnvironmentPlugin(['NODE_ENV']), new HtmlWebpackPlugin({template: path.resolve('./index.html')})];
 if (process.env.NODE_ENV === 'production') {
   PLUGINS.push(
     new MinifyPlugin(
@@ -72,11 +73,12 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   devServer: {
-    disableHostCheck: true
+    disableHostCheck: true,
+    contentBase: "./build", 
   },
   entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js'
   },
   plugins: PLUGINS,

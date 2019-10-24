@@ -1,6 +1,6 @@
 # BeatPose
 
-Play a BeatSaber-like game with body movements using Tensorflow.js & Posenet, in the browser!
+Play a Beat Saber clone with hand movements using Tensorflow.js & Posenet, in the browser!
 
 *Based on the awesome work by [Supermedium](http://supermedium.com/) on the [beat saver viewer](https://github.com/supermedium/beatsaver-viewer).*
 
@@ -51,16 +51,3 @@ Then open `localhost:9999` in your browser and the default song should be `Bohem
 These kinds of side projects take me a lot of time so, if you like them, your support would be really appreciated if you want to/can 🙂.
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/D1D2122V8)
-
-
-## To do
-
-- [x] Remove camera stream code.
-- [x] Add right hand
-- [x] Left hand can only explode reds
-- [x] Right hand can only explode blues
-- [x] Remove canvas circles
-- [ ] Host on Netlify
-- [ ] Add instructions on README
-- [ ] Credit in console to supermedium
-- [ ] Add repo link to article
