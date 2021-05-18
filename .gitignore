@@ -45,6 +45,5 @@ exports/
 dump.rdb
 .ghpages
 play.html
-/index.html
 
 package-lock.json
