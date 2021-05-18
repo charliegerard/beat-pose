@@ -73,11 +73,9 @@ PLUGINS = [
 // }
 
 module.exports = {
-  mode: "none",
+  mode: "production",
   devServer: {
     disableHostCheck: true,
-    // contentBase: "./build",
-    // contentBase: "./src",
     contentBase: "./",
   },
   entry: "./src/index.js",
