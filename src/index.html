@@ -8,8 +8,12 @@
       type="image/x-icon"
     />
     <link rel="icon" href="assets/img/favicon.png" type="image/x-icon" />
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.2.0/aframe.min.js"></script> -->
     <script src="vendor/pose-detection.js" type="module"></script>
@@ -24,7 +28,8 @@
     {% else %}
     <script src="vendor/aframe-master.js"></script>
     {% endif %}
-    <script src="dist/bundle.js"></script>
+    <!-- <script src="dist/bundle.js"></script> -->
+    <script src="build/bundle.js"></script>
     <!-- <script src="bundle.js"></script> -->
   </head>
   <body>
