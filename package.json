@@ -17,7 +17,7 @@
   "license": "GNU",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
-    "start": "webpack-dev-server --host 0.0.0.0 --progress --colors --hot --inline --port 9999"
+    "start": "webpack serve --host 0.0.0.0 --progress --hot --inline --port 9999"
   },
   "dependencies": {
     "aframe-aabb-collider-component": "^3.1.0",
@@ -46,37 +46,38 @@
     "babel-preset-stage-0": "6.24.1",
     "body-parser": "1.18.2",
     "classnames": "^2.2.5",
-    "css-loader": "^0.23.1",
+    "css-loader": "^5.2.4",
     "debug": "^4.1.0",
-    "firebase": "^5.5.8",
     "html-entities": "^1.2.1",
     "html-minifier": "^3.5.11",
     "ip": "1.1.5",
     "json-loader": "^0.5.7",
     "nunjucks": "3.0.1",
-    "postcss": "^6.0.23",
-    "postcss-loader": "^0.9.1",
     "preact": "^8.4.2",
     "style-loader": "^0.23.1",
-    "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.2",
-    "uglify-js": "git://github.com/mishoo/UglifyJS2#harmony",
-    "uglifyjs-webpack-plugin": "0.4.6",
+    "uglify-js": "3.13.6",
+    "uglifyjs-webpack-plugin": "2.2.0",
     "url-loader": "^1.1.2",
-    "webpack": "2.3.3",
+    "webpack": "5.37.0",
+    "webpack-cli": "^4.7.0",
     "webpack-glsl-loader": "^1.0.1",
     "webpack-sources": "1.0.1",
     "zip-loader": "github:ngokevin/ZipLoader#beatviewer"
   },
   "devDependencies": {
+    "@webpack-cli/serve": "^1.4.0",
     "cross-env": "4.0.0",
     "ghpages": "0.0.10",
-    "html-webpack-plugin": "^3.2.0",
+    "html-webpack-plugin": "^5.3.1",
+    "postcss": "^8.2.15",
+    "postcss-loader": "^3.0.0",
     "semistandard": "10.0.0",
     "shx": "^0.2.2",
     "snazzy": "7.0.0",
+    "stylus": "^0.54.8",
+    "stylus-loader": "^6.0.0",
     "superagent": "^3.8.2",
-    "webpack-dev-server": "2.4.4"
+    "webpack-dev-server": "^3.11.2"
   },
   "semistandard": {
     "globals": [
@@ -85,6 +86,6 @@
     ]
   },
   "engines": {
-    "node": "8.9.1"
+    "node": "14.16.0"
   }
 }
