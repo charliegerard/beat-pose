@@ -31,8 +31,8 @@ AFRAME.registerComponent("left-hand-controller", {
   },
   onHandMove: function () {
     const handVector = new THREE.Vector3();
-    handVector.x = (leftHandPosition.x / window.innerWidth) * 2 - 1;
-    handVector.y = -(leftHandPosition.y / window.innerHeight) * 2 + 1;
+    handVector.x = (leftHandPosition.x / window.innerWidth) * -1.5 + 0.5;
+    handVector.y = -(leftHandPosition.y / window.innerHeight) * 2 + 0.5;
     handVector.z = 0;
 
     const camera = self.el.sceneEl.camera;
@@ -53,9 +53,6 @@ AFRAME.registerComponent("left-hand-controller", {
 
     if (Array.from(entities).length) {
       for (var i = 0; i < Array.from(entities).length; i++) {
-        // const beatMesh =
-        //   entities[i].object3D.el.object3D.el.object3D.el.object3D.children[0]
-        //     .children[1];
         const beatMesh =
           entities[i].object3D.el.components.beat.blockEl.object3DMap.mesh;
         entitiesObjects.push(beatMesh);
@@ -63,33 +60,17 @@ AFRAME.registerComponent("left-hand-controller", {
 
       let intersects = raycaster.intersectObjects(entitiesObjects, true);
       if (intersects.length) {
-        // const beat =
-        //   intersects[0].object.el.attributes[0].ownerElement.parentEl.components
-        //     .beat;
-        // const beat = intersects[0].object;
         const beat =
           intersects[0].object.el.object3D.children[0].el.object3D.parent.el
             .components.beat;
-        // console.log(intersects[0].el.mixinEls[0].nextElementSibling.attributes.beat.value);
-        // console.log(intersects[0].el.mixinEls[0].nextElementSibling.componentCache.type);
+
         const beatColor =
           intersects[0].object.el.attributes[1].ownerElement.components.material
             .attrValue.color;
-
-        // console.log("BEAT", intersects);
-        // const beatColor = beat.attrValue.color;
-        // const beatType = beat.attrValue.type;
-
-        // beat.destroyBeat();
-
-        // console.log(beatColor);
-        // #036657
+        const beatType = beat.attrValue.type;
 
         if (beatColor === "#660338") {
-          // if (beatColor === "red") {
-          //   if (beatType === "arrow" || beatType === "dot") {
           beat.destroyBeat();
-          //   }
         }
       }
     }

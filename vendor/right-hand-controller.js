@@ -31,8 +31,8 @@ AFRAME.registerComponent("right-hand-controller", {
   },
   onHandMove: function () {
     const handVector = new THREE.Vector3();
-    handVector.x = (rightHandPosition.x / window.innerWidth) * 2 - 1;
-    handVector.y = -(rightHandPosition.y / window.innerHeight) * 2 + 1;
+    handVector.x = (rightHandPosition.x / window.innerWidth) * -1.5 + 1;
+    handVector.y = -(rightHandPosition.y / window.innerHeight) * 2 + 0.5;
     handVector.z = 0;
 
     const camera = self.el.sceneEl.camera;
@@ -53,9 +53,6 @@ AFRAME.registerComponent("right-hand-controller", {
 
     if (Array.from(entities).length) {
       for (var i = 0; i < Array.from(entities).length; i++) {
-        // const beatMesh =
-        //   entities[i].object3D.el.object3D.el.object3D.el.object3D.children[0]
-        //     .children[1];
         const beatMesh =
           entities[i].object3D.el.components.beat.blockEl.object3DMap.mesh;
 
@@ -64,10 +61,6 @@ AFRAME.registerComponent("right-hand-controller", {
 
       let intersects = raycaster.intersectObjects(entitiesObjects, true);
       if (intersects.length) {
-        // const beat =
-        //   intersects[0].object.el.attributes[0].ownerElement.parentEl.components
-        //     .beat;
-        // const beat = intersects[0].object;
         const beat =
           intersects[0].object.el.object3D.children[0].el.object3D.parent.el
             .components.beat;
@@ -75,17 +68,10 @@ AFRAME.registerComponent("right-hand-controller", {
         const beatColor =
           intersects[0].object.el.attributes[1].ownerElement.components.material
             .attrValue.color;
-        // console.log("BEAT", intersects);
-        // const beatColor = beat.attrValue.color;
-        // const beatType = beat.attrValue.type;
         const beatType = intersects[0].object.el.attributes[0].nodeValue;
 
-        // console.log(beatColor);
         if (beatColor === "#036657") {
-          // if (beatColor === "blue") {
-          //   if (beatType === "arrow" || beatType === "dot") {
           beat.destroyBeat();
-          //   }
         }
       }
     }

@@ -2,8 +2,12 @@
 <html>
   <head>
     <title>BeatPose</title>
-    <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
-    <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
+    <link
+      rel="shortcut icon"
+      href="assets/img/favicon.png"
+      type="image/x-icon"
+    />
+    <link rel="icon" href="assets/img/favicon.png" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
@@ -12,14 +16,13 @@
     <script src="vendor/right-hand-controller.js" type="module"></script>
 
     {% if DEBUG_AFRAME %}
-      <script src="https://{{ HOST }}:9000/dist/aframe-master.js"></script>
+    <script src="https://{{ HOST }}:9000/dist/aframe-master.js"></script>
     {% elif IS_PRODUCTION %}
-      <script src="vendor/aframe-master.min.js"></script>
+    <script src="vendor/aframe-master.min.js"></script>
     {% else %}
-      <script src="vendor/aframe-master.js"></script>
+    <script src="vendor/aframe-master.js"></script>
     {% endif %}
     <script src="dist/bundle.js"></script>
-
   </head>
   <body>
     <a-scene
@@ -37,11 +40,18 @@
       hack
       cursor="rayOrigin: mouse"
       gpu-preloader
-      {% if DEBUG_INSPECTOR %}
-        inspector="url: https://localhost:3333/dist/aframe-inspector.js"
-      {% else %}
-        inspector="url: https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js"
-      {% endif %}
+      {%
+      if
+      DEBUG_INSPECTOR
+      %}
+      inspector="url: https://localhost:3333/dist/aframe-inspector.js"
+      {%
+      else
+      %}
+      inspector="url: https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js"
+      {%
+      endif
+      %}
       iframe-url
       loading-screen="backgroundColor: #000;"
       pool__beat-arrow-blue="mixin: arrowBlueBeat; size: 10; container: #beatContainer"
@@ -59,51 +69,89 @@
       stats-param
       vr-mode-ui="enabled: false"
       user-gesture
-      tutorial-2d>
+      tutorial-2d
+    >
+      <a-assets timeout="10000"> {% include './assets.html' %} </a-assets>
 
-      <a-assets timeout="10000">
-        {% include './assets.html' %}
-      </a-assets>
+      <a-entity
+        id="beatObjTemplate"
+        obj-model="obj: #beatObj"
+        visible="false"
+      ></a-entity>
+      <a-entity
+        id="arrowRedObjTemplate"
+        obj-model="obj: #arrowredObj"
+        visible="false"
+      ></a-entity>
+      <a-entity
+        id="arrowBlueObjTemplate"
+        obj-model="obj: #arrowblueObj"
+        visible="false"
+      ></a-entity>
+      <a-entity
+        id="dotRedObjTemplate"
+        obj-model="obj: #dotredObj"
+        visible="false"
+      ></a-entity>
+      <a-entity
+        id="dotBlueObjTemplate"
+        obj-model="obj: #dotblueObj"
+        visible="false"
+      ></a-entity>
+      <a-entity
+        id="mineObjTemplate"
+        obj-model="obj: #mineObj"
+        visible="false"
+      ></a-entity>
+      <a-entity
+        id="cursorLaser"
+        obj-model="obj: #laserObj"
+        visible="false"
+      ></a-entity>
 
-      <a-entity id="beatObjTemplate" obj-model="obj: #beatObj" visible="false"></a-entity>
-      <a-entity id="arrowRedObjTemplate" obj-model="obj: #arrowredObj" visible="false"></a-entity>
-      <a-entity id="arrowBlueObjTemplate" obj-model="obj: #arrowblueObj" visible="false"></a-entity>
-      <a-entity id="dotRedObjTemplate" obj-model="obj: #dotredObj" visible="false"></a-entity>
-      <a-entity id="dotBlueObjTemplate" obj-model="obj: #dotblueObj" visible="false"></a-entity>
-      <a-entity id="mineObjTemplate" obj-model="obj: #mineObj" visible="false"></a-entity>
-      <a-entity id="cursorLaser" obj-model="obj: #laserObj" visible="false"></a-entity>
+      <a-entity
+        id="beatContainer"
+        bind__pause="isPaused: !isPlaying"
+        beat-hit-sound
+      ></a-entity>
 
-      <a-entity id="beatContainer" bind__pause="isPaused: !isPlaying" beat-hit-sound></a-entity>
-
-      {% include './templates/stage.html' %}
-      {% include './templates/gameMenu.html' %}
-
-      {% include './templates/loading.html' %}
+      {% include './templates/stage.html' %} {% include
+      './templates/gameMenu.html' %} {% include './templates/loading.html' %}
 
       <a-entity id="glowContainer"></a-entity>
 
       <a-entity
         id="saberParticles"
-        particleplayer="src: #saberParticlesJSON; interpolate: true; pscale: 0.55; dur: 800; loop: false; on: explode; img: #sparkImg; count: 20%; animateScale: true; initialScale: 4 1 1; finalScale: 0.2 0.2 1"></a-entity>
+        particleplayer="src: #saberParticlesJSON; interpolate: true; pscale: 0.55; dur: 800; loop: false; on: explode; img: #sparkImg; count: 20%; animateScale: true; initialScale: 4 1 1; finalScale: 0.2 0.2 1"
+      ></a-entity>
       <a-entity
         id="mineParticles"
-        particleplayer="src: #mineParticlesJSON; pscale: 0.5; interpolate: true; scale: 1.4; loop: false; on: explode; img: #sparkImg; count: 20%; animateScale: true; initialScale: 3 1 1; finalScale: 0.2 0.2 1"></a-entity>
+        particleplayer="src: #mineParticlesJSON; pscale: 0.5; interpolate: true; scale: 1.4; loop: false; on: explode; img: #sparkImg; count: 20%; animateScale: true; initialScale: 3 1 1; finalScale: 0.2 0.2 1"
+      ></a-entity>
       <a-entity
         id="sparkParticles"
-        particleplayer="src: #sparksJSON; color: #fcc; pscale: 0.5; on: explode; scale: 0.12; loop: false; img: #spark2Img; dur: 700; count: 50%; animateScale: true; initialScale: 3 0.5 1; finalScale: 0.1 0.5 1"></a-entity>
+        particleplayer="src: #sparksJSON; color: #fcc; pscale: 0.5; on: explode; scale: 0.12; loop: false; img: #spark2Img; dur: 700; count: 50%; animateScale: true; initialScale: 3 0.5 1; finalScale: 0.1 0.5 1"
+      ></a-entity>
 
       <a-mixin
         id="cursorMesh"
         material="shader: flat; transparent: true; src: #cursorMeshImg; depthTest: false"
-        ></a-mixin>
+      ></a-mixin>
 
       <!-- Player. -->
       <a-entity id="cameraRig">
-        <a-entity id="camera" position="0 1.6 0.5" camera look-controls wasd-controls>
+        <a-entity
+          id="camera"
+          position="0 1.6 0.5"
+          camera
+          look-controls
+          wasd-controls
+        >
           <a-entity
             id="cameraCollider"
             geometry="primitive: box; width: 0.10; height: 0.10; depth: 0.10"
-            visible="false"></a-entity>
+            visible="false"
+          ></a-entity>
         </a-entity>
       </a-entity>
 
@@ -112,26 +160,39 @@
         bind__raycaster="enabled: !inVR"
         mixin="raycaster"
         cursor="rayOrigin: mouse"
-        raycaster="objects: [raycastable]"></a-entity>
+        raycaster="objects: [raycastable]"
+      ></a-entity>
 
       <a-entity
         id="mouseCursorMesh"
         mixin="cursorMesh"
         cursor-mesh="cursorEl: #mouseCursor"
-        bind__cursor-mesh="active: menuActive"></a-entity>
+        bind__cursor-mesh="active: menuActive"
+      ></a-entity>
 
-      <a-entity id="left-hand" left-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #660338" position="-1 1 -0.2"></a-entity>
-      <a-entity id="right-hand" right-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #036657" position="1 1 -0.2"></a-entity>
+      <a-entity
+        id="left-hand"
+        left-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #660338"
+        position="-1 1 -0.2"
+      ></a-entity>
+      <a-entity
+        id="right-hand"
+        right-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #036657"
+        position="1 1 -0.2"
+      ></a-entity>
     </a-scene>
 
     {% include './templates/controls.html' %}
-    <video id="video" playsinline style=" -moz-transform: scaleX(-1);
+    <!-- <video id="video" playsinline style=" -moz-transform: scaleX(-1);
       -o-transform: scaleX(-1);
       -webkit-transform: scaleX(-1);
       transform: scaleX(-1);
     ">
-    </video>
-    <canvas id="output" style='position: absolute; top: 0; left: 0; z-index: 1;'></canvas>
+    </video> -->
+    <canvas
+      id="output"
+      style="position: absolute; top: 0; left: 0; z-index: 1"
+    ></canvas>
 
     {% include './templates/ga.html' %}
 
