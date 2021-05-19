@@ -31,7 +31,8 @@ AFRAME.registerComponent("left-hand-controller", {
   },
   onHandMove: function () {
     const handVector = new THREE.Vector3();
-    handVector.x = (leftHandPosition.x / window.innerWidth) * -1.5 + 0.5;
+    // handVector.x = (leftHandPosition.x / window.innerWidth) * -1.5 + 0.5;
+    handVector.x = (leftHandPosition.x / window.innerWidth) * -1.5 * 2 + 1;
     handVector.y = -(leftHandPosition.y / window.innerHeight) * 2 + 0.5;
     handVector.z = 0;
 
