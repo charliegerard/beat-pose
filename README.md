@@ -52,4 +52,4 @@ Then open `localhost` (on port `9999` if you ran it with npm) in your browser an
 
 These kinds of side projects take me a lot of time so, if you like them, your support would be really appreciated if you want to/can 🙂.
 
-![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/D1D2122V8)
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/D1D2122V8)
