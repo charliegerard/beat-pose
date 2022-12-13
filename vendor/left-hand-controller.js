@@ -34,7 +34,7 @@ AFRAME.registerComponent("left-hand-controller", {
     // handVector.x = (leftHandPosition.x / window.innerWidth) * -1.5 + 0.5;
     handVector.x = (leftHandPosition.x / window.innerWidth) * -1.5 * 2 + 1;
     handVector.y = -(leftHandPosition.y / window.innerHeight) * 2 + 0.5;
-    handVector.z = 0;
+    // handVector.z = 0;
 
     const camera = self.el.sceneEl.camera;
     handVector.unproject(camera);
@@ -47,11 +47,9 @@ AFRAME.registerComponent("left-hand-controller", {
 
     const pos = cameraElPosition.clone().add(dir.multiplyScalar(distance));
 
-    // el.object3D.position.copy(dir);
-    // el.object3D.position.x = dir.x;
-    // el.object3D.position.copy(pos);
+    el.object3D.position.copy(pos);
 
-    // el.object3D.position.z = -0.2;
+    el.object3D.position.z = -0.8;
 
     const raycaster = new THREE.Raycaster();
     raycaster.setFromCamera(handVector, camera);

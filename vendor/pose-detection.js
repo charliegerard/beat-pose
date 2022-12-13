@@ -59,28 +59,19 @@ const guiState = {
 };
 
 function getLeftHand(keypoints) {
-  for (var i = 0; i < keypoints.length; i++) {
-    if (keypoints[i].name === "left_wrist") {
-      return { x: keypoints[i].x, y: keypoints[i].y };
-    }
-  }
+  const leftWristKeypoints = keypoints.filter(
+    (k) => k.name === "left_wrist"
+  )[0];
+  
+  return { x: leftWristKeypoints.x, y: leftWristKeypoints.y };
 }
 
 function getRightHand(keypoints) {
   const rightWristKeypoints = keypoints.filter(
     (k) => k.name === "right_wrist"
   )[0];
-  // for (var i = 0; i < keypoints.length; i++) {
-  // if (keypoints[i].name === "right_wrist") {
-  // console.log(keypoints[i].score);
-  // console.log("right hand");
 
-  // if (rightWristKeypoints.score > 0.3) {
   return { x: rightWristKeypoints.x, y: rightWristKeypoints.y };
-  // }
-
-  // }
-  // }
 }
 
 function detectPoseInRealTime(video, net) {

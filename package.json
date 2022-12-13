@@ -5,7 +5,7 @@
   "author": {
     "name": "Charlie Gerard",
     "email": "charlie.a.gerard@gmail.com",
-    "url": "https://charliegerard.github.io"
+    "url": "https://charliegerard.dev"
   },
   "description": "Play Beat Saber with body movements using Tensorflow.js and PoseNet",
   "keywords": [
