@@ -4,10 +4,12 @@
     <title>BeatPose</title>
     <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
     <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
+
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+    
     <script src="vendor/pose-detection.js" type="module"></script>
     <script src="vendor/left-hand-controller.js" type="module"></script>
     <script src="vendor/right-hand-controller.js" type="module"></script>
@@ -222,6 +224,8 @@
   ></a-mixin>
 
       </a-assets>
+
+      
 
       <a-entity id="beatObjTemplate" obj-model="obj: #beatObj" visible="false"></a-entity>
       <a-entity id="arrowRedObjTemplate" obj-model="obj: #arrowredObj" visible="false"></a-entity>
@@ -465,8 +469,13 @@
         cursor-mesh="cursorEl: #mouseCursor"
         bind__cursor-mesh="active: menuActive"></a-entity>
 
-      <a-entity id="left-hand" left-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #660338" position="-1 1 -0.2"></a-entity>
-      <a-entity id="right-hand" right-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #036657" position="1 1 -0.2"></a-entity>
+      <!-- <a-entity id="left-hand" left-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #660338" position="-1 1 -0.2"></a-entity> -->
+      <a-entity id="left-hand" left-hand-controller="width: 0.5; height: 0.5; depth: 0.5; color: #660338" position="-1 1.5 -1"></a-entity>
+      
+      <!-- <a-entity id="right-hand" right-hand-controller="width: 0.1; height: 0.1; depth: 0.1; color: #036657" position="1 1 -0.2"></a-entity> -->
+      <a-entity id="right-hand" right-hand-controller="width: 0.5; height: 0.5; depth: 0.5; color: #036657" position="1 1.5 -1"></a-entity>
+
+
     </a-scene>
 
     <div id="controls">
@@ -529,5 +538,4 @@
 
     <div id="search"></div>
     <span id="iframeUrl"></span>
-  
 </html>

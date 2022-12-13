@@ -32,20 +32,25 @@ AFRAME.registerComponent("right-hand-controller", {
   onHandMove: function () {
     const handVector = new THREE.Vector3();
     // handVector.x = (rightHandPosition.x / window.innerWidth) * -1.5 + 1;
+    handVector.x = (rightHandPosition.x / window.innerWidth) * -1.5 * 2 + 2;
     // handVector.x = (rightHandPosition.x / window.innerWidth) * -1.5 + 0.5;
-    handVector.x = (rightHandPosition.x / window.innerWidth) * -1.5 * 2 + 1;
+    // handVector.x = (rightHandPosition.x / window.innerWidth) * -1.5 * 2 + 1;
     handVector.y = -(rightHandPosition.y / window.innerHeight) * 2 + 0.5;
-    handVector.z = 0;
+    // handVector.z = 0;
 
     const camera = self.el.sceneEl.camera;
     handVector.unproject(camera);
 
     const cameraObjectPosition = camera.el.object3D.position;
+
     const dir = handVector.sub(cameraObjectPosition).normalize();
+
     const distance = -cameraObjectPosition.z / dir.z;
     const pos = cameraObjectPosition.clone().add(dir.multiplyScalar(distance));
+
     el.object3D.position.copy(pos);
-    el.object3D.position.z = -0.2;
+    // el.object3D.position.z = -0.2;
+    el.object3D.position.z = -0.8;
 
     const raycaster = new THREE.Raycaster();
     raycaster.setFromCamera(handVector, camera);

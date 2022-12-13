@@ -59,19 +59,19 @@ const guiState = {
 };
 
 function getLeftHand(keypoints) {
-  for (var i = 0; i < keypoints.length; i++) {
-    if (keypoints[i].name === "left_wrist") {
-      return { x: keypoints[i].x, y: keypoints[i].y };
-    }
-  }
+  const leftWristKeypoints = keypoints.filter(
+    (k) => k.name === "left_wrist"
+  )[0];
+  
+  return { x: leftWristKeypoints.x, y: leftWristKeypoints.y };
 }
 
 function getRightHand(keypoints) {
-  for (var i = 0; i < keypoints.length; i++) {
-    if (keypoints[i].name === "right_wrist") {
-      return { x: keypoints[i].x, y: keypoints[i].y };
-    }
-  }
+  const rightWristKeypoints = keypoints.filter(
+    (k) => k.name === "right_wrist"
+  )[0];
+
+  return { x: rightWristKeypoints.x, y: rightWristKeypoints.y };
 }
 
 function detectPoseInRealTime(video, net) {
@@ -115,11 +115,11 @@ function detectPoseInRealTime(video, net) {
 
     poses.forEach(({ score, keypoints }) => {
       if (score >= minPoseConfidence) {
-        if (guiState.output.showPoints) {
-          handsKeyPoints = keypoints;
-          leftHandPosition = getLeftHand(keypoints);
-          rightHandPosition = getRightHand(keypoints);
-        }
+        // if (guiState.output.showPoints) {
+        handsKeyPoints = keypoints;
+        leftHandPosition = getLeftHand(keypoints);
+        rightHandPosition = getRightHand(keypoints);
+        // }
       }
     });
 
