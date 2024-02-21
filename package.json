@@ -51,7 +51,7 @@
     "firebase": "^5.5.8",
     "html-entities": "^1.2.1",
     "html-minifier": "^3.5.11",
-    "ip": "1.1.5",
+    "ip": "1.1.9",
     "json-loader": "^0.5.7",
     "nunjucks": "3.0.1",
     "postcss": "^6.0.23",
